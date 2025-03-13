@@ -1,0 +1,225 @@
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+@plugin "daisyui";
+
+@source "../views";
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1, oklch(0.80 0.01 100));
+    --color-chart-2: var(--chart-2, oklch(0.70 0.01 100));
+    --color-chart-3: var(--chart-3, oklch(0.60 0.01 100));
+    --color-chart-4: var(--chart-4, oklch(0.50 0.01 100));
+    --color-chart-5: var(--chart-5, oklch(0.40 0.01 100));
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent, var(--accent));
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground, var(--accent-foreground));
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Memperbaiki masalah border color di Tailwind v4 */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--border, currentColor);
+    }
+}
+
+/* Konfigurasi tema terang */
+:root {
+    --radius: 0.5rem;
+    
+    --background: oklch(0.98 0.005 100); /* Putih halus */
+    --foreground: oklch(0.25 0.005 100); /* Abu-abu sangat gelap */
+    
+    --card: oklch(0.96 0.005 100); /* Putih sedikit lebih gelap */
+    --card-foreground: oklch(0.25 0.005 100);
+    
+    --popover: oklch(0.98 0.005 100);
+    --popover-foreground: oklch(0.25 0.005 100);
+    
+    --primary: oklch(0.35 0.01 100); /* Abu-abu gelap */
+    --primary-foreground: oklch(0.98 0.005 100);
+    
+    --secondary: oklch(0.90 0.01 100); /* Abu-abu terang */
+    --secondary-foreground: oklch(0.25 0.005 100);
+    
+    --muted: oklch(0.93 0.005 100); /* Abu-abu sangat terang */
+    --muted-foreground: oklch(0.50 0.005 100); /* Abu-abu medium */
+    
+    --accent: oklch(0.85 0.01 100); /* Abu-abu terang */
+    --accent-foreground: oklch(0.30 0.005 100);
+    
+    --destructive: oklch(0.35 0.01 100); /* Abu-abu gelap */
+    --destructive-foreground: oklch(0.98 0.005 100);
+    
+    --border: oklch(0.85 0.005 100); /* Abu-abu terang */
+    --input: oklch(0.90 0.005 100);
+    --ring: oklch(0.80 0.01 100);
+    
+    --sidebar: oklch(0.95 0.005 100);
+    --sidebar-foreground: oklch(0.25 0.005 100);
+    --sidebar-primary: oklch(0.35 0.01 100);
+    --sidebar-primary-foreground: oklch(0.98 0.005 100);
+    --sidebar-border: oklch(0.85 0.005 100);
+    --sidebar-ring: oklch(0.80 0.01 100);
+    
+    /* Chart colors dalam gradasi monokrom */
+    --chart-1: oklch(0.80 0.01 100);
+    --chart-2: oklch(0.70 0.01 100);
+    --chart-3: oklch(0.60 0.01 100);
+    --chart-4: oklch(0.50 0.01 100);
+    --chart-5: oklch(0.40 0.01 100);
+}
+
+/* Konfigurasi tema gelap */
+.dark {
+    --background: oklch(0.15 0.005 100); /* Hitam lembut */
+    --foreground: oklch(0.90 0.005 100); /* Putih lembut */
+    
+    --card: oklch(0.18 0.005 100);
+    --card-foreground: oklch(0.90 0.005 100);
+    
+    --popover: oklch(0.18 0.005 100);
+    --popover-foreground: oklch(0.90 0.005 100);
+    
+    --primary: oklch(0.85 0.01 100); /* Abu-abu terang */
+    --primary-foreground: oklch(0.15 0.005 100);
+    
+    --secondary: oklch(0.25 0.01 100); /* Abu-abu gelap */
+    --secondary-foreground: oklch(0.90 0.005 100);
+    
+    --muted: oklch(0.22 0.005 100);
+    --muted-foreground: oklch(0.65 0.005 100);
+    
+    --accent: oklch(0.30 0.01 100);
+    --accent-foreground: oklch(0.90 0.005 100);
+    
+    --destructive: oklch(0.25 0.01 100);
+    --destructive-foreground: oklch(0.90 0.005 100);
+    
+    --border: oklch(0.30 0.005 100);
+    --input: oklch(0.25 0.005 100);
+    --ring: oklch(0.40 0.01 100);
+    
+    --sidebar: oklch(0.20 0.005 100);
+    --sidebar-foreground: oklch(0.90 0.005 100);
+    --sidebar-primary: oklch(0.85 0.01 100);
+    --sidebar-primary-foreground: oklch(0.15 0.005 100);
+    --sidebar-border: oklch(0.30 0.005 100);
+    --sidebar-ring: oklch(0.40 0.01 100);
+    
+    /* Chart colors dalam gradasi monokrom untuk tema gelap */
+    --chart-1: oklch(0.40 0.01 100);
+    --chart-2: oklch(0.50 0.01 100);
+    --chart-3: oklch(0.60 0.01 100);
+    --chart-4: oklch(0.70 0.01 100);
+    --chart-5: oklch(0.80 0.01 100);
+}
+
+/* Konfigurasi daisyUI untuk mencegah konflik warna */
+@layer base {
+    :root {
+        /* Mengaplikasikan warna-warna ke daisyUI */
+        --p: oklch(0.35 0.01 100); /* primary */
+        --pc: oklch(0.98 0.005 100); /* primary content */
+        --s: oklch(0.90 0.01 100); /* secondary */
+        --sc: oklch(0.25 0.005 100); /* secondary content */
+        --a: oklch(0.85 0.01 100); /* accent */
+        --ac: oklch(0.30 0.005 100); /* accent content */
+        --n: oklch(0.25 0.005 100); /* neutral */
+        --nc: oklch(0.98 0.005 100); /* neutral content */
+        --b1: oklch(0.98 0.005 100); /* base-100 */
+        --bc: oklch(0.25 0.005 100); /* base content */
+        --b2: oklch(0.96 0.005 100); /* base-200 */
+        --b3: oklch(0.93 0.005 100); /* base-300 */
+        --in: oklch(0.50 0.01 100); /* info - tetap abu-abu */
+        --inc: oklch(0.98 0.005 100);
+        --su: oklch(0.40 0.01 100); /* success - tetap abu-abu */
+        --suc: oklch(0.98 0.005 100);
+        --wa: oklch(0.60 0.01 100); /* warning - tetap abu-abu */
+        --wac: oklch(0.25 0.005 100);
+        --er: oklch(0.35 0.01 100); /* error - tetap abu-abu */
+        --erc: oklch(0.98 0.005 100);
+    }
+
+    .dark {
+        /* Mengaplikasikan warna-warna ke daisyUI untuk tema gelap */
+        --p: oklch(0.85 0.01 100);
+        --pc: oklch(0.15 0.005 100);
+        --s: oklch(0.25 0.01 100);
+        --sc: oklch(0.90 0.005 100);
+        --a: oklch(0.30 0.01 100);
+        --ac: oklch(0.90 0.005 100);
+        --n: oklch(0.90 0.005 100);
+        --nc: oklch(0.15 0.005 100);
+        --b1: oklch(0.15 0.005 100);
+        --bc: oklch(0.90 0.005 100);
+        --b2: oklch(0.18 0.005 100);
+        --b3: oklch(0.22 0.005 100);
+        --in: oklch(0.60 0.01 100);
+        --inc: oklch(0.15 0.005 100);
+        --su: oklch(0.70 0.01 100);
+        --suc: oklch(0.15 0.005 100);
+        --wa: oklch(0.50 0.01 100);
+        --wac: oklch(0.90 0.005 100);
+        --er: oklch(0.40 0.01 100);
+        --erc: oklch(0.90 0.005 100);
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}

@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+.pacifico {
+    font-family: 'Pacifico', cursive;
+}
+
+.gradientText {
+    background: linear-gradient(90deg, #C41230, #1A75BC, #263B65);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+  /* Dropdown Menu */
+.dropdown-content {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.dropdown:hover .dropdown-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hover effect untuk link */
+.menu a {
+    transition: all 0.2s ease-in-out;
+}
+
+.menu a:hover {
+    color: #ff758c;
+    transform: scale(1.05);
+}
