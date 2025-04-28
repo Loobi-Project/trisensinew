@@ -39,5 +39,35 @@ export interface User {
     role?: {
         name: string;
     };
-    [key: string]: unknown; // This allows for additional properties
+    [key: string]: unknown; 
+}
+
+export interface PageProps {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+        };
+    };
+    hadir: number;
+    izin: number;
+    sakit: number;
+    alfa: number;
+    todayStatus: {
+        presence_status?: {
+            name: string;
+        };
+        timestamp: string;
+    } | null;
+    student: {
+        name: string;
+        classroom?: {
+            name: string;
+        };
+    };
+    activeSemester: {
+        name: string;
+    };
+    [key: string]: unknown;
 }

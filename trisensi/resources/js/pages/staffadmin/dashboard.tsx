@@ -1,14 +1,12 @@
 import AppLayoutStaffAdmin from '@/layouts/staffadmin/app-layout-staffadmin';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard Super Admin',
-        href: '/superadmin/dashboard',
+        title: 'Dashboard Staff Admin',
+        href: '/staffadmin/dashboard',
     },
 ];
-
 export default function Dashboard() {
     return (
         <AppLayoutStaffAdmin breadcrumbs={breadcrumbs}>

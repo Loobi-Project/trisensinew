@@ -15,7 +15,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Buat Akun Tata Usaha',
-        url: '/superadmin/adm',
+        url: '/superadmin/spadm',
         icon: Users,
     },
 ];

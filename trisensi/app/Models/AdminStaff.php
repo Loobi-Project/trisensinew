@@ -9,7 +9,7 @@ class AdminStaff extends Model
 {
     use HasFactory;
 
-    protected $table = 'admin_staff';
+    protected $table = 'admin_staffs';
 
     protected $fillable = [
         'staff_id',

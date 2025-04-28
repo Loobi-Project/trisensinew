@@ -62,7 +62,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('/superadmin/adm/count-staff');
+                const response = await axios.get('/superadmin/spadm/count-staff');
                 setTotalAdminStaff(response.data.total || 0);
             } catch (error) {
                 console.error('Error mengambil data tata usaha yang terhubung:', error);

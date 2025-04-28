@@ -48,7 +48,7 @@ const SuperAdminLogin = () => {
 
                     <Button type="submit" className="mt-4 w-full" disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Login
+                        Masuk
                     </Button>
                 </div>
             </form>
