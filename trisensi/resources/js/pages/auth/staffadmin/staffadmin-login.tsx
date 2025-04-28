@@ -83,10 +83,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">
-                    Belum punya akun?{' '}
-                    <TextLink href={route('register')} tabIndex={5}>
-                        Sign up
-                    </TextLink>
+                    Belum punya akun? Hubungi Super Admin untuk membuat akun Tata Usaha.{' '}
                     {' '}Atau kamu sebagai
                     <TextLink href={route('superadmin.login')} tabIndex={6}>
                         {' '}Super Admin

@@ -9,7 +9,7 @@ class Staff extends Model
 {
     use HasFactory;
 
-    protected $table = 'staff'; // Nama tabel yang digunakan
+    protected $table = 'staffs'; 
 
     protected $fillable = [
         'user_id',
@@ -34,5 +34,10 @@ class Staff extends Model
     public function adminStaff()
     {
         return $this->hasOne(AdminStaff::class, 'staff_id', 'id');
+    }
+
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class, 'staff_id', 'id');
     }
 }

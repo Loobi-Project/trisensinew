@@ -89,17 +89,17 @@ export default function Welcome() {
                             onClick={(e) => handleNavigation(e, route('staff-role'))}
                             className="bg-primary/30 text-primary hover:bg-primary/90 hover:text-primary-foreground focus-visible:ring-ring inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium shadow transition-all duration-500 focus-visible:ring-1 focus-visible:outline-none"
                         >
-                            Masuk Sebagai Pegawai
+                            Pegawai
                         </Link>
                     </nav>
 
                     <div className="flex items-center gap-4">
                         <Link
-                            href={route('login')}
-                            onClick={(e) => handleNavigation(e, route('login'))}
+                            href={route('student.login')}
+                            onClick={(e) => handleNavigation(e, route('stulogin'))}
                             className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium shadow focus-visible:ring-1 focus-visible:outline-none"
                         >
-                            Masuk Sebagai Siswa
+                            Siswa
                         </Link>
                         <MobileNav smoothScrollTo={smoothScrollTo} />
                     </div>
@@ -110,7 +110,7 @@ export default function Welcome() {
                     <div className="grid items-center gap-10 md:grid-cols-2">
                         <div className="space-y-6">
                             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                                Selamat Datang Siswa dan Siswi SMA Negeri 3
+                                Selamat Datang Siswa dan Siswi SMA Negeri 3 Purwokerto
                             </h1>
                             <p className="text-muted-foreground md:text-xl">
                                 Trisensi merupakan singkatan dari <span className="font-semibold">Tiga Presensi</span>, yang terinspirasi dari SMAN 3
@@ -218,8 +218,8 @@ export default function Welcome() {
 
                         <div className="flex justify-center">
                             <Link
-                                href={route('login')}
-                                onClick={(e) => handleNavigation(e, route('login'))}
+                                href={route('student.login')}
+                                onClick={(e) => handleNavigation(e, route('student.login'))}
                                 className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex h-10 items-center justify-center rounded-md px-8 text-sm font-medium shadow transition-colors focus-visible:ring-1 focus-visible:outline-none"
                             >
                                 Mulai Sekarang
@@ -346,7 +346,7 @@ function MobileNav({ smoothScrollTo }) {
                     onClick={(e) => handleMobileNavigation(e, route('staff-role'))}
                     className="bg-primary/30 text-primary hover:bg-primary/90 hover:text-primary-foreground focus-visible:ring-ring block w-full rounded-md px-4 py-2 text-center text-sm font-medium shadow transition-all duration-500 focus-visible:ring-1 focus-visible:outline-none xl:hidden"
                 >
-                    Masuk Sebagai Pegawai
+                    Pegawai
                 </Link>
             </div>
         </div>
