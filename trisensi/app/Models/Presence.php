@@ -33,4 +33,9 @@ class Presence extends Model
     {
         return $this->belongsTo(Semester::class, 'semester_id');
     }
+
+    public function recaps()
+    {
+        return $this->hasMany(PresenceRecap::class, 'presence_id');
+    }
 }

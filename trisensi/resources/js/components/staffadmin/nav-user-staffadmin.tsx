@@ -1,6 +1,6 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
-import { UserInfoSuperAdmin } from '@/components/superadmin/user-info-superadmin';
+import { UserInfoStaffAdmin } from '@/components/staffadmin/user-info-staffadmin';
 import { UserMenuContentStaffAdmin } from '@/components/staffadmin/user-menu-content-staffadmin';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { type SharedData } from '@/types';
@@ -18,7 +18,7 @@ export function NavUserStaffAdmin() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton size="lg" className="text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group">
-                            <UserInfoSuperAdmin user={auth.user} />
+                            <UserInfoStaffAdmin user={auth.user} />
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>

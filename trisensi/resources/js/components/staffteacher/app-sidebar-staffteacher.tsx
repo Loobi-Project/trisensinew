@@ -3,7 +3,7 @@ import { NavUserStaffTeacher } from '@/components/staffteacher/nav-user-stafftea
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, ChevronDown, ChevronUp, LayoutGrid} from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronUp, ClipboardList, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
 import AppLogo from '../app-logo';
 
@@ -25,8 +25,13 @@ const isDropdownItem = (item: SidebarNavItem): item is DropdownNavItem => {
 const mainNavItems: SidebarNavItem[] = [
     {
         title: 'Dashboard',
-        url: '/staffteacher/dashboard',
+        url: route('staffteacher.dashboard'), 
         icon: LayoutGrid,
+    },
+    {
+        title: 'Rekap Presensi Siswa',
+        url: route('staffteacher.presence-recap-entry'), 
+        icon: ClipboardList,
     },
 ];
 
@@ -52,10 +57,11 @@ export function StaffTeacherSidebar() {
         }
     };
 
-    const iconClass = "h-4 w-4";
-    const titleClass = "ml-4 text-sm text-gray-700 dark:text-gray-300"; 
-    const regularItemClass = "flex items-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md px-3 py-2";
-    const dropdownParentClass = "flex items-center justify-between w-full text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-800 rounded-md px-3 py-2";
+    const iconClass = 'h-4 w-4';
+    const titleClass = 'ml-4 text-sm text-gray-700 dark:text-gray-300';
+    const regularItemClass = 'flex items-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md px-3 py-2';
+    const dropdownParentClass =
+        'flex items-center justify-between w-full text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-800 rounded-md px-3 py-2';
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -91,12 +97,12 @@ export function StaffTeacherSidebar() {
                                             </div>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
-                                    
+
                                     {item.isOpen &&
                                         item.children.map((child) => (
                                             <SidebarMenuItem key={child.title}>
                                                 <SidebarMenuButton asChild>
-                                                    <Link href={child.url} prefetch className={regularItemClass + " pl-10"}>
+                                                    <Link href={child.url} prefetch className={regularItemClass + ' pl-10'}>
                                                         <div className="flex w-5 flex-shrink-0 justify-center">
                                                             {child.icon && <child.icon className={iconClass} />}
                                                         </div>

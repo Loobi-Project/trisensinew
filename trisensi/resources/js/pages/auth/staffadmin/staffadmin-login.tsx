@@ -1,7 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
-
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
@@ -34,12 +33,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
     return (
         <AuthLayout title="Masuk sebagai Tata Usaha" description="Masukkan email dan kata sandi Anda di bawah ini untuk masuk">
-            <Head title="Log in" />
-
+            <Head title="Masuk" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label htmlFor="email">Alamat Email</Label>
                         <Input
                             id="email"
                             type="email"
@@ -53,15 +51,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         />
                         <InputError message={errors.email} />
                     </div>
-
                     <div className="grid gap-2">
                         <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
-                            {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                    Forgot password?
-                                </TextLink>
-                            )}
+                            <Label htmlFor="password">Kata Sandi</Label>
+                            <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                Lupa kata sandi?
+                            </TextLink>
                         </div>
                         <Input
                             id="password"
@@ -71,17 +66,15 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             autoComplete="current-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
+                            placeholder="Kata Sandi"
                         />
                         <InputError message={errors.password} />
                     </div>
-
                     <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        Log in
+                        Masuk
                     </Button>
                 </div>
-
                 <div className="text-muted-foreground text-center text-sm">
                     Belum punya akun? Hubungi Super Admin untuk membuat akun Tata Usaha.{' '}
                     {' '}Atau kamu sebagai
@@ -90,7 +83,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </TextLink>
                 </div>
             </form>
-
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
         </AuthLayout>
     );

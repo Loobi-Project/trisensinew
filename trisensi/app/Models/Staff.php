@@ -9,7 +9,7 @@ class Staff extends Model
 {
     use HasFactory;
 
-    protected $table = 'staffs'; 
+    protected $table = 'staffs';
 
     protected $fillable = [
         'user_id',
@@ -38,6 +38,6 @@ class Staff extends Model
 
     public function teacher()
     {
-        return $this->hasOne(Teacher::class, 'staff_id', 'id');
+        return $this->hasOne(Teacher::class, 'staff_id');
     }
 }

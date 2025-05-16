@@ -96,7 +96,7 @@ export default function Welcome() {
                     <div className="flex items-center gap-4">
                         <Link
                             href={route('student.login')}
-                            onClick={(e) => handleNavigation(e, route('stulogin'))}
+                            onClick={(e) => handleNavigation(e, route('student.login'))}
                             className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-medium shadow focus-visible:ring-1 focus-visible:outline-none"
                         >
                             Siswa

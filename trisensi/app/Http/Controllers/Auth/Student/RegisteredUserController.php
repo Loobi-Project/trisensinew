@@ -66,7 +66,7 @@ class RegisteredUserController extends Controller
                 'role_id' => $studentRole->id,
                 'academic_year_id' => $request->academic_year_id,
                 'nis' =>  $request->nis,
-                'is_active' => 0,
+                'is_active' => 1,
             ]);
 
             DB::commit();

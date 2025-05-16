@@ -4,7 +4,7 @@ import AppearanceTabs from '@/components/appearance-tabs';
 import HeadingSmall from '@/components/heading-small';
 import { type BreadcrumbItem } from '@/types';
 
-import AppLayout from '@/layouts/superadmin/app-layout-superadmin';
+import AppLayout from '@/layouts/staffadmin/app-layout-staffadmin';
 import SettingsLayout from '@/layouts/settings/staffadmin/layout-staffadmin';
 
 const breadcrumbs: BreadcrumbItem[] = [

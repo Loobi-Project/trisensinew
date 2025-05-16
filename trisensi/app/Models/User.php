@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Notifications\ResetPasswordNotification;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -46,7 +47,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     public function staff()
     {
         return $this->hasOne(Staff::class);
@@ -58,8 +59,12 @@ class User extends Authenticatable
     }
 
     public function student()
-{
-    return $this->hasOne(Student::class);
-}
+    {
+        return $this->hasOne(Student::class);
+    }
 
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 }

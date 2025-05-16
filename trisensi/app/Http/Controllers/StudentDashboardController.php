@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Presence;
+use App\Models\Semester;
+use App\Models\PresenceRecap;
+use App\Models\PresenceStatus;
+use App\Models\AbsenceLetterTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -26,16 +32,16 @@ class StudentDashboardController extends Controller
         $presence = Presence::where('student_id', $studentId)
             ->where('is_active', true)
             ->where('expiration_date', '>', now())
-            ->orderBy('created_at', 'desc')
+            ->orderBy('timestamp', 'desc')
             ->first();
 
         if (!$presence) {
             return null;
         }
 
-        // Get class and semester info
-        $className = DB::table('classes')->where('id', $presence->classes_id)->value('name');
-        $semesterBatch = DB::table('semesters')->where('id', $presence->semester_id)->value('batch');
+        // Use proper model relationships
+        $className = $presence->classes->name ?? null;
+        $semesterBatch = $presence->semester->batch ?? null;
 
         // Create a Carbon instance if it's a string
         $expirationDate = $presence->expiration_date;
@@ -69,20 +75,69 @@ class StudentDashboardController extends Controller
         ];
     }
 
-    public function index(Request $request): Response
+    public function index()
     {
-        return Inertia::render('student/dashboard', $this->getSharedData($request));
+        $user = Auth::user();
+        $student = $user->student;
+
+        $presenceRecaps = DB::table('presence_recaps')
+            ->join('presence_status', 'presence_recaps.presence_status_id', '=', 'presence_status.id')
+            ->select('presence_status.name', DB::raw('count(*) as count'))
+            ->groupBy('presence_status.name')
+            ->get();
+
+        // Mengambil status kehadiran berdasarkan nama status
+        $hadir = $presenceRecaps->where('name', 'Hadir')->first()->count ?? 0;
+        $terlambat = $presenceRecaps->where('name', 'Terlambat')->first()->count ?? 0;
+        $izin = $presenceRecaps->where('name', 'Izin')->first()->count ?? 0;
+        $sakit = $presenceRecaps->where('name', 'Sakit')->first()->count ?? 0;
+        $alfa = $presenceRecaps->where('name', 'Alfa')->first()->count ?? 0;
+
+        $todayPresence = $student->presences()->whereDate('created_at', today())->first();
+
+        return inertia('Student/Dashboard', [
+            'auth' => [
+                'user' => $user,
+            ],
+            'totalPresenceRecaps' => $presenceRecaps->count(),
+            'hadir' => $hadir,
+            'terlambat' => $terlambat,
+            'izin' => $izin,
+            'sakit' => $sakit,
+            'alfa' => $alfa,
+            'todayStatus' => $todayPresence ? [
+                'presenceStatus' => $todayPresence->presenceStatus,
+                'timestamp' => $todayPresence->created_at,
+            ] : null,
+            'student' => $student,
+            'classroom' => $student->classroom->name ?? null,
+            'activeSemester' => $student->classroom->activeSemester ?? null,
+            'semesterName' => optional($student->classroom->activeSemester)->name,
+            'presence' => $todayPresence,  // Tambahkan data presence ke dalam props
+            'debug' => app()->environment('local') ? $presenceRecaps : null,
+        ]);
     }
 
     public function createPresence(Request $request): Response
     {
-        $classes = DB::table('classes')->select('id', 'name')->get();
-        $semesters = DB::table('semesters')->select('id', 'batch')->get();
+        // Use Eloquent instead of raw DB queries
+        $classes = \App\Models\Classes::select('id', 'name')->get();
+        $semesters = Semester::select('id', 'batch')->get();
 
         return Inertia::render('student/create-student-presence', array_merge([
             'classes' => $classes,
             'semesters' => $semesters,
         ], $this->getSharedData($request)));
+    }
+
+    // Letter template absence page
+    public function selectAbsenceLetterTemplate()
+    {
+        $templates = AbsenceLetterTemplate::all();
+
+        return Inertia::render('student/student-absence-letter', [
+            'templates' => $templates,
+        ]);
     }
 
     /**
@@ -107,7 +162,7 @@ class StudentDashboardController extends Controller
                 'semester_id' => $validated['semester_id'],
                 'student_id' => $student->id,
             ])
-                ->whereDate('created_at', now()->toDateString())
+                ->whereDate('timestamp', now()->toDateString())
                 ->first();
 
             // Jika sudah ada, gunakan yang ada
@@ -183,7 +238,7 @@ class StudentDashboardController extends Controller
         $presence = Presence::where('student_id', $student->id)
             ->where('is_active', true)
             ->where('expiration_date', '>', now())
-            ->orderBy('created_at', 'desc')
+            ->orderBy('timestamp', 'desc')
             ->first();
 
         if (!$presence) {
@@ -210,8 +265,10 @@ class StudentDashboardController extends Controller
         $studentName = $student->user->name;
         $nis = $student->nis;
         $academicYear = $student->academicYear ? $student->academicYear->description : 'N/A';
-        $className = DB::table('classes')->where('id', $presence->classes_id)->value('name');
-        $semesterBatch = DB::table('semesters')->where('id', $presence->semester_id)->value('batch');
+
+        // Use model relationships instead of DB queries
+        $className = $presence->classes->name ?? 'N/A';
+        $semesterBatch = $presence->semester->batch ?? 'N/A';
 
         $expirationDate = $presence->expiration_date;
         if (is_string($expirationDate)) {

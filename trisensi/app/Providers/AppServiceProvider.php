@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\CheckStaffDetails;
+use Illuminate\Support\Facades\URL;
+// use Illuminate\Support\Facades\Route;
+// use App\Http\Middleware\CheckStaffDetails;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,8 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Route::middlewareGroup('check.staff.details', [
-            CheckStaffDetails::class,
-        ]);
+        // Route::middlewareGroup('check.staff.details', [
+        //     CheckStaffDetails::class,
+        // ]);
+        if (env('APP_ENV') !== 'local' || str_contains(env('APP_URL'), 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }

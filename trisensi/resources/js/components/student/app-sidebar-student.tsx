@@ -3,7 +3,7 @@ import { NavUserStudent } from '@/components/student/nav-user-student';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, CalendarCheck, ChevronDown, ChevronUp, LayoutGrid} from 'lucide-react';
+import { BookOpen, CalendarCheck, ChevronDown, ChevronUp, FileText, LayoutGrid} from 'lucide-react';
 import { useState } from 'react';
 import AppLogo from '../app-logo';
 
@@ -33,7 +33,13 @@ const mainNavItems: SidebarNavItem[] = [
         title: 'Mulai Absen',
         url : route('student.create-presence'),
         icon: CalendarCheck,
+    },
+    {
+        title: 'Format Surat',
+        url: route('student.select-letter-absence'),
+        icon: FileText,
     }
+    
 ];
 
 const footerNavItems: NavItem[] = [

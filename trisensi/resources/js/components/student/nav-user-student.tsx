@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { UserInfoStudent } from '@/components/student/user-info-student';
-import { UserMenuContentStaffAdmin } from '@/components/staffadmin/user-menu-content-staffadmin';
+import { UserMenuContentStudent } from '@/components/student/user-menu-content-student';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { type SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
@@ -27,7 +27,7 @@ export function NavUserStudent() {
                         align="end"
                         side={isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'}
                     >
-                        <UserMenuContentStaffAdmin user={auth.user} />
+                        <UserMenuContentStudent user={auth.user} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

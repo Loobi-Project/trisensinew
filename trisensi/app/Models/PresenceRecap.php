@@ -10,7 +10,7 @@ class PresenceRecap extends Model
     use HasFactory;
 
     protected $table = 'presence_recaps';
-    
+
     protected $fillable = [
         'presence_id',
         'presence_status_id',
@@ -18,7 +18,7 @@ class PresenceRecap extends Model
         'timestamp',
     ];
 
-    public $timestamps = false; 
+    public $timestamps = false;
 
     public function presence()
     {
@@ -28,5 +28,10 @@ class PresenceRecap extends Model
     public function presenceStatus()
     {
         return $this->belongsTo(PresenceStatus::class, 'presence_status_id');
+    }
+
+    public function scopeForUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
     }
 }
