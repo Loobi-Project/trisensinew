@@ -9,8 +9,8 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
-import SettingsLayout from '@/layouts/settings/superadmin/layout-superadmin';
+import SettingsLayout from '@/layouts/settings/layout';
+import AppLayoutStudent from '@/layouts/student/app-layout-student';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,13 +30,13 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'), {
+        patch(route('profile.update-student'), {
             preserveScroll: true,
         });
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayoutStudent breadcrumbs={breadcrumbs}>
             <Head title="Profile settings" />
 
             <SettingsLayout>
@@ -117,6 +117,6 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                 <DeleteUser />
             </SettingsLayout>
-        </AppLayout>
+        </AppLayoutStudent>
     );
 }

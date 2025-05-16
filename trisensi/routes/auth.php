@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Student auth controllers
 use App\Http\Controllers\Auth\Student\AuthenticatedSessionStudentController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\GlobalLoginController;
 
 // Admin and teacher controllers
 use App\Http\Controllers\Auth\SuperAdmin\SuperAdminAuthController;
@@ -44,6 +46,10 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
+
+    Route::get('login', [GlobalLoginController::class, 'create'])
+        ->name('login');
+    Route::post('login', [GlobalLoginController::class, 'store']);
 });
 
 // Common auth routes for verified users
@@ -65,7 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
+        ->name('logout');
 });
 
 // Student routes
@@ -241,7 +247,9 @@ Route::prefix('staffadmin')->group(function () {
 Route::prefix('staffteacher')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', function () {
-            return Inertia::render('auth/staffteacher/staffteacher-login');
+            return Inertia::render('auth/staffteacher/staffteacher-login', [
+                'canResetPassword' => Route::has('password.request'),
+            ]);
         })->name('staffteacher.login');
 
         Route::post('/login', [StaffTeacherAuthController::class, 'login']);

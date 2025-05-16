@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminStaff;
-use App\Models\User;
 use App\Models\Role;
 use App\Models\Staff;
+use App\Models\Student;
+use App\Models\Teacher;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -17,7 +19,20 @@ class SuperAdminDashboardController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('SuperAdmin/Dashboard');
+        try {
+            $totalStaff = Staff::whereHas('adminStaff')->where('is_active', 1)->count();
+            $totalTeachers = Teacher::where('is_active', 1)->count();
+            $totalStudents = Student::where('is_active', 1)->count();
+
+            return Inertia::render('SuperAdmin/Dashboard', [
+                'totalAdminStaff' => $totalStaff,
+                'totalTeachers' => $totalTeachers,
+                'totalStudents' => $totalStudents
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Dashboard Error: ' . $e->getMessage());
+            abort(500, 'Terjadi kesalahan saat memuat data dashboard.');
+        }
     }
 
     public function createStaff(): Response
@@ -48,7 +63,7 @@ class SuperAdminDashboardController extends Controller
                 'password' => Hash::make($validated['password']),
             ]);
 
-            $staff =  Staff::create([
+            $staff = Staff::create([
                 'user_id' => $user->id,
                 'role_id' => $staffRole->id,
                 'nip' => null,
@@ -65,7 +80,6 @@ class SuperAdminDashboardController extends Controller
             return redirect()->route('superadmin.spadm')->with('success', 'Akun staff berhasil dibuat!');
         } catch (\Exception $e) {
             DB::rollBack();
-
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
@@ -83,16 +97,32 @@ class SuperAdminDashboardController extends Controller
 
     public function countStaff()
     {
-        $total = Staff::whereHas('role', function ($query) {
-            $query->where('name', 'staff');
-        })
-            ->whereHas('adminStaff')
-            ->count();
+        try {
+            $total = Staff::whereHas('role', function ($query) {
+                $query->where('name', 'staff');
+            })
+                ->whereHas('adminStaff', function ($query) {
+                    $query->where('is_active', 1);
+                })
+                ->count();
 
-        return response()->json(['total' => $total]);
+            return response()->json(['total' => $total]);
+        } catch (\Exception $e) {
+            \Log::error('Count Staff Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan saat menghitung staff.'], 500);
+        }
+    }
+    public function countTeachers()
+    {
+        $totalTeachers = Teacher::where('is_active', 1)->count();
+        return response()->json(['total' => $totalTeachers]);
     }
 
-
+    public function countStudents()
+    {
+        $totalStudents = Student::where('is_active', 1)->count();
+        return response()->json(['total' => $totalStudents]);
+    }
 
     public function deleteStaff($id)
     {
@@ -112,6 +142,7 @@ class SuperAdminDashboardController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
     public function deleteMultipleStaff(Request $request)
     {
         $request->validate([
@@ -132,9 +163,7 @@ class SuperAdminDashboardController extends Controller
             $userIds = $staffRecords->pluck('user_id')->toArray();
 
             AdminStaff::whereIn('staff_id', $staffIds)->delete();
-
             Staff::whereIn('id', $staffIds)->delete();
-
             User::whereIn('id', $userIds)->delete();
 
             DB::commit();

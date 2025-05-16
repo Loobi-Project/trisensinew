@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class PresenceStatus extends Model
 {
     public $timestamps = false;
-    
+
     protected $table = 'presence_status';
-    
+
     protected $fillable = [
         'name',
         'description',
@@ -26,5 +26,10 @@ class PresenceStatus extends Model
     public function absenceLetter()
     {
         return $this->belongsTo(AbsenceLetter::class, 'absence_letter_id');
+    }
+
+    public function recaps()
+    {
+        return $this->hasMany(PresenceRecap::class, 'presence_status_id');
     }
 }

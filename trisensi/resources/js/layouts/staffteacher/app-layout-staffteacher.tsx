@@ -2,6 +2,7 @@ import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout-staffteacher';
 import { type BreadcrumbItem } from '@/types';
 import axios from 'axios';
 import { useEffect, useState, type ReactNode } from 'react';
+import { router } from '@inertiajs/react';
 
 interface AppLayoutProps {
     children: ReactNode;
@@ -41,7 +42,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
         };
 
         checkUserStatus();
-    }, []);  
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -75,7 +76,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
 
                 setTimeout(() => {
                     setShowModal(false);
-                    setIsDataProcessComplete(true); 
+                    setIsDataProcessComplete(true);
                     // setShowPasswordModal(true);
                 }, 1500);
             } else {
@@ -87,19 +88,19 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
             setLoading(false);
         }
     };
-    
+
     // Hanya periksa aktivasi setelah proses data selesai
     useEffect(() => {
         if (isDataProcessComplete) {
             checkIsActive();
         }
     }, [isDataProcessComplete]);
-    
+
     const checkIsActive = async () => {
         try {
             const res = await fetch('/staffteacher/get-detect-is-active-teacher');
             const data = await res.json();
-    
+
             if (data.is_active === 0) {
                 // Tutup modal lain jika masih terbuka
                 setShowModal(false);
@@ -113,7 +114,7 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
         } catch (err) {
             console.error('Gagal mengambil data status:', err);
         }
-    };  
+    };
 
     return (
         <div className="relative">
@@ -181,6 +182,11 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
                             Akun Anda sudah didaftarkan. Silakan menunggu konfirmasi dari Tata Usaha. Jika terlalu lama, silakan hubungi mereka secara
                             langsung.
                         </p>
+                        <div className="mt-4 text-center">
+                            <button onClick={() => router.post('/logout')} className="text-blue-500 hover:underline">
+                                Keluar
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

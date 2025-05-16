@@ -3,7 +3,7 @@ import { NavUserStaffAdmin } from '@/components/staffadmin/nav-user-staffadmin';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Calendar, ChevronDown, ChevronUp, ClipboardList, Clock, GraduationCap, LayoutGrid, School, User, Users, CheckCheck, QrCode, ListChecks } from 'lucide-react';
+import { BookOpen, Calendar, ChevronDown, ChevronUp, ClipboardList, Clock, GraduationCap, LayoutGrid, School, User, Users, CheckCheck, QrCode, ListChecks, FileText } from 'lucide-react';
 import { useState } from 'react';
 import AppLogo from '../app-logo';
 
@@ -59,6 +59,11 @@ const mainNavItems: SidebarNavItem[] = [
                 title: 'Rekap Kehadiran',
                 url: route('staffadmin.attendance.records'),
                 icon: ListChecks,
+            },
+            {
+                title: 'Template Surat Izin',
+                url: route('staffadmin.attendance.template'),
+                icon: FileText,
             },
         ],
     },

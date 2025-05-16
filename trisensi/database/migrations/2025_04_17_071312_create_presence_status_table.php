@@ -25,6 +25,7 @@ return new class extends Migration
 
         DB::table('presence_status')->insert([
             ['name' => 'Hadir', 'description' => 'Masuk tanpa surat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Terlambat', 'description' => 'Masuk tanpa surat dengan terlambat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Izin', 'description' => 'Izin dengan surat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Sakit', 'description' => 'Sakit dengan surat', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Alfa', 'description' => 'Tanpa keterangan', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],

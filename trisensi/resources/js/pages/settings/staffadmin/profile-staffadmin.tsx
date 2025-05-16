@@ -30,7 +30,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update-superadmin'), {
+        patch(route('profile.update-staffadmin'), {
             preserveScroll: true,
         });
     };

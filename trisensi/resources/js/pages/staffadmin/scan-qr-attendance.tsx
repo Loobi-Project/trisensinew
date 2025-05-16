@@ -18,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function ScanQrAttendancePage() {
     const [isScanning, setIsScanning] = useState(false);
     const [message, setMessage] = useState('');
-    const [status, setStatus] = useState('idle'); // idle, success, error, loading
+    const [status, setStatus] = useState('idle'); // idle, success, error, loading, late
     const [lastScanned, setLastScanned] = useState(null);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -183,7 +183,6 @@ export default function ScanQrAttendancePage() {
                 }
             }
             if (data.presence_id) {
-                playSound('success');
                 processAttendance(data.presence_id);
             } else {
                 playSound('error');
@@ -220,18 +219,25 @@ export default function ScanQrAttendancePage() {
         .then(response => {
             const data = response.data;
             if (data.success) {
-                // Extract student name from message if available
+                // Extract student name and status from message if available
                 const message = data.message || '';
                 const studentName = message.split(' ')[0] || `Siswa ${presenceId}`;
                 const timestamp = new Date().toLocaleTimeString('id-ID');
                 
+                // Check if status is "Terlambat" from the message
+                const isLate = message.toLowerCase().includes('terlambat');
+                const attendanceStatus = isLate ? 'Terlambat' : 'Hadir';
+                
                 setLastScanned({
                     name: studentName,
-                    status: 'Hadir',
-                    timestamp: timestamp
+                    status: attendanceStatus,
+                    timestamp: timestamp,
+                    isLate: isLate // Used for styling
                 });
                 
-                setStatus('success');
+                // Set status based on whether the student is late or not
+                setStatus(isLate ? 'late' : 'success');
+                playSound('success');
                 setMessage(data.message || 'Presensi berhasil dicatat');
             } else {
                 throw new Error(data.message || 'Terjadi kesalahan');
@@ -247,12 +253,30 @@ export default function ScanQrAttendancePage() {
             setStatus('error');
             setMessage(error.response?.data?.message || error.message || 'Terjadi kesalahan');
             
+            playSound('error');
+
             // Resume scanning after a short delay
             setTimeout(() => {
                 setMessage('');
                 startScanInterval();
             }, 3000);
         });
+    };
+
+    // Helper function to get status message style
+    const getStatusMessageStyle = () => {
+        switch (status) {
+            case 'error':
+                return 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700';
+            case 'success':
+                return 'bg-green-100 text-green-800 border border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700';
+            case 'late':
+                return 'bg-orange-100 text-orange-800 border border-orange-200 dark:bg-orange-900 dark:text-orange-200 dark:border-orange-700';
+            case 'loading':
+                return 'bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700';
+            default:
+                return 'bg-gray-100 text-gray-800 border border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700';
+        }
     };
 
     return (
@@ -311,12 +335,7 @@ export default function ScanQrAttendancePage() {
                             
                             {/* Status messages */}
                             {message && (
-                                <div className={`w-full mt-4 p-3 rounded-lg text-center ${
-                                    status === 'error' ? 'bg-red-100 text-red-800 border border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-700' : 
-                                    status === 'success' ? 'bg-green-100 text-green-800 border border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700' :
-                                    status === 'loading' ? 'bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700' :
-                                    'bg-gray-100 text-gray-800 border border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700'
-                                }`}>
+                                <div className={`w-full mt-4 p-3 rounded-lg text-center ${getStatusMessageStyle()}`}>
                                     {status === 'loading' && (
                                         <div className="flex items-center justify-center">
                                             <div className="mr-2 w-4 h-4 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -346,7 +365,7 @@ export default function ScanQrAttendancePage() {
                                 )}
                             </div>
                             
-                            {/* Last scanned result */}
+                            {/* Last scanned result - Updated to handle late status with orange styling */}
                             {lastScanned && (
                                 <div className="w-full mt-6 p-4 bg-gray-100 border border-gray-300 dark:bg-gray-800 dark:border-gray-700 rounded-lg">
                                     <h3 className="text-lg font-semibold mb-2">Hasil Pemindaian Terakhir</h3>
@@ -357,7 +376,11 @@ export default function ScanQrAttendancePage() {
                                         </div>
                                         <div className="flex">
                                             <span className="font-medium w-20">Status:</span>
-                                            <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-sm rounded-full">
+                                            <span className={`px-2 py-1 text-sm rounded-full ${
+                                                lastScanned.isLate 
+                                                    ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' 
+                                                    : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                            }`}>
                                                 {lastScanned.status}
                                             </span>
                                         </div>

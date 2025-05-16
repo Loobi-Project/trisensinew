@@ -22,7 +22,7 @@ export function UserMenuContentStaffAdmin({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                    <Link className="block w-full" href={route('profile.edit-superadmin')} as="button" prefetch onClick={cleanup}>
+                    <Link className="block w-full" href={route('profile.edit-staffadmin')} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />
                         Settings
                     </Link>

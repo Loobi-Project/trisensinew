@@ -16,13 +16,14 @@ class Teacher extends Model
         'name',
         'is_active',
     ];
-    
-    public function staff(){
-        return $this->belongsTo(Staff::class, 'staff_id');
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id')->with('user');
     }
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id'); 
+        return $this->belongsTo(Role::class, 'role_id');
     }
 }
