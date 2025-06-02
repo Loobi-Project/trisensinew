@@ -1,0 +1,70 @@
+@startuml
+title Sequence Diagram Konfirmasi Akun Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary View as V
+control Controller as C
+entity Model as M
+
+== Akses Halaman Konfirmasi ==
+
+TU -> V: 1. Akses Dashboard
+V --> TU: Tampilkan Dashboard
+
+TU -> V: 2. Pilih "Konfirmasi Akun" > "Siswa"
+V -> C: Handle navigation
+C -> M: Get pending & confirmed student data
+M --> C: Return student confirmation data
+C -> V: Load confirmation page
+V --> TU: Tampilkan halaman konfirmasi siswa
+
+== Konfirmasi Akun Siswa ==
+
+TU -> V: 3. Klik tombol "Konfirmasi" pada siswa
+V -> C: Handle confirmation request
+C -> M: Validate & update student status
+
+alt Konfirmasi Berhasil
+    M --> C: Student confirmed successfully
+    C -> V: Show success notification
+    V --> TU: "Berhasil konfirmasi akun siswa"
+    
+    C -> M: Get updated data (pending & confirmed)
+    M --> C: Return refreshed data
+    C -> V: Refresh both tables
+    V --> TU: Update tampilan kedua tabel
+    
+else Konfirmasi Gagal
+    M --> C: Validation failed
+    C -> V: Show error message
+    V --> TU: "Gagal konfirmasi akun siswa"
+end
+
+== Pencarian Siswa ==
+
+group Search Function
+    TU -> V: 4. Input pencarian (nama/NIS)
+    V -> C: Handle search request
+    C -> M: Search confirmed students
+    M --> C: Return search results
+    C -> V: Update search display
+    V --> TU: Tampilkan hasil pencarian
+end
+
+note over TU, M
+**Pre-kondisi:**
+- Tata Usaha login di dashboard
+- Ada siswa yang perlu dikonfirmasi
+
+**Post-kondisi:**
+- Akun siswa berhasil dikonfirmasi
+- Data berpindah ke tabel "sudah dikonfirmasi"
+- Dapat mencari siswa berdasarkan nama/NIS
+
+**Fitur:**
+- Konfirmasi akun siswa pending
+- Pencarian siswa yang sudah dikonfirmasi
+- Real-time update tampilan tabel
+end note
+
+@enduml

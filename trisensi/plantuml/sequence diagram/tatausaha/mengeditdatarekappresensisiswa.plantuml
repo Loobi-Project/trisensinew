@@ -1,0 +1,76 @@
+@startuml
+title Sequence Diagram Mengedit Data Rekap Presensi Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary View as V
+control Controller as C
+entity Model as M
+
+== Akses Halaman Rekap Presensi ==
+
+TU -> V: 1. Akses Dashboard
+V --> TU: Tampilkan Dashboard
+
+TU -> V: 2. Pilih "Presensi Siswa" > "Rekap Kehadiran"
+V -> C: Handle navigation
+C -> M: Get attendance data
+M --> C: Return data with auto-generated absences
+C -> V: Load rekap page
+V --> TU: Tampilkan halaman rekap
+
+TU -> V: 3. Pilih tampilan "Table"
+V -> C: Handle table view
+C -> M: Get detailed attendance records
+M --> C: Return student records
+C -> V: Generate table
+V --> TU: Tampilkan tabel rekap kehadiran
+
+== Edit Status Kehadiran ==
+
+group Edit Status
+    TU -> V: 4. Klik tombol "Sakit" atau "Izin" pada siswa
+    V -> C: Handle status update
+    C -> M: Update attendance status
+    M --> C: Status updated
+    C -> V: Show success notification
+    V --> TU: Konfirmasi perubahan status
+    
+    C -> V: Update table display
+    V --> TU: Tampilkan status terbaru
+end
+
+== Auto Assignment (Sistem) ==
+
+group Auto Alfa
+    note over C, M: Setelah jam sekolah berakhir
+    C -> M: Check students without manual update
+    M --> C: List of unupdated students
+    C -> M: Auto-assign "Alfa" status
+    M --> C: Alfa status assigned
+    C -> V: Update final attendance
+end
+
+== Error Handling ==
+
+alt Record Editable
+    C -> M: Check if record can be edited
+    M --> C: Record is editable
+    note right: Proceed with update
+else Record Finalized
+    M --> C: Record already finalized
+    C -> V: Show error message
+    V --> TU: "Data sudah tervalidasi, tidak dapat diubah"
+end
+
+note over TU, M
+**Pre-kondisi:**
+- Tata Usaha login di dashboard
+- Data rekap otomatis sudah dibuat
+
+**Post-kondisi:**
+- Status siswa berubah dari default ke "Sakit"/"Izin"
+- Siswa tidak diedit otomatis menjadi "Alfa"
+- Data tervalidasi setelah jam sekolah
+end note
+
+@enduml

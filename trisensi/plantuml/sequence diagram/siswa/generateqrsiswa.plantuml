@@ -1,0 +1,67 @@
+@startuml
+title Sequence Diagram Generate QR Siswa (Siswa)
+actor "Siswa" as S
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Create Presence ==
+S -> UI: 1. Akses sidebar "Mulai Absen"
+UI -> C: 2. Request create presence page
+C -> DB: 3. Get data kelas siswa
+DB --> C: 4. Return kelas data
+C -> DB: 5. Get data semester aktif
+DB --> C: 6. Return semester data
+C --> UI: 7. Load create presence page
+UI --> S: 8. Tampilkan halaman dengan dropdown kelas dan semester
+
+== Pilih Kelas dan Semester ==
+S -> UI: 9. Pilih kelas dari dropdown
+UI --> S: 10. Update pilihan kelas
+S -> UI: 11. Pilih semester dari dropdown
+UI --> S: 12. Update pilihan semester
+
+== Generate QR Code ==
+S -> UI: 13. Klik tombol "Generate QR Code"
+UI -> C: 14. Handle QR generation request
+
+alt Data lengkap (kelas dan semester dipilih)
+    C -> C: 14.1. Validate form data
+    note right
+    - Kelas harus dipilih
+    - Semester harus dipilih
+    end note
+    C -> DB: 14.2. Get siswa identity data
+    DB --> C: 14.3. Return siswa data (NIS, nama, kelas, semester)
+    C -> C: 14.4. Generate QR code dengan data siswa
+    note right
+    QR Code berisi:
+    - NIS Siswa
+    - Nama Siswa
+    - Kelas yang dipilih
+    - Semester yang dipilih
+    - Masa berlaku (6 bulan)
+    - Timestamp generate
+    end note
+    C -> DB: 14.5. Save QR session data
+    DB --> C: 14.6. QR session saved
+    C --> UI: 14.7. Return QR code image + siswa identity
+    UI --> S: 14.8. Tampilkan QR Code dan identitas siswa
+    note right
+    Menampilkan:
+    - QR Code yang di-generate
+    - Identitas siswa (NIS, nama)
+    - Kelas dan semester terpilih
+    - Masa berlaku QR (6 bulan)
+    end note
+else Data tidak lengkap
+    C -> C: 14.1. Validate form data
+    C --> UI: 14.2. Validation error
+    UI --> S: 14.3. Tampilkan pesan error dan disable tombol
+    note right
+    - "Pilih kelas terlebih dahulu"
+    - "Pilih semester terlebih dahulu"
+    - Tombol "Generate QR Code" disabled
+    end note
+end
+@enduml

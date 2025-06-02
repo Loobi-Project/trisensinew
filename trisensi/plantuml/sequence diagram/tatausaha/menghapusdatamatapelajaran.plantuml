@@ -1,0 +1,47 @@
+@startuml
+title Sequence Diagram Menghapus Data Mata Pelajaran (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Mata Pelajaran ==
+TU -> UI: 1. Akses menu "Mata Pelajaran"
+UI -> C: 2. Request subjects page
+C -> DB: 3. Get subjects list
+DB --> C: 4. Return subjects data
+C --> UI: 5. Load subjects page
+UI --> TU: 6. Tampilkan daftar mata pelajaran
+
+== Hapus Data Mata Pelajaran ==
+TU -> UI: 7. Klik tombol "Hapus" pada mata pelajaran
+UI -> C: 8. Request delete confirmation
+C --> UI: 9. Show confirmation dialog
+UI --> TU: 10. Tampilkan konfirmasi "Yakin hapus mata pelajaran ini?"
+
+alt User konfirmasi (OK)
+    TU -> UI: 10.1. Klik "OK"
+    UI -> C: 10.2. Confirm deletion
+    C -> DB: 10.3. Delete subject
+    
+    alt Penghapusan berhasil
+        DB --> C: 10.4. Success
+        C -> DB: 10.5. Get updated subjects list
+        DB --> C: 10.6. Return updated data
+        C --> UI: 10.7. Success + refresh data
+        UI --> TU: 10.8. "Mata pelajaran berhasil dihapus" + update daftar
+    else Penghapusan gagal
+        DB --> C: 10.4. Error
+        C --> UI: 10.5. Error response
+        UI --> TU: 10.6. "Gagal menghapus mata pelajaran"
+    end
+    
+else User batal (Cancel)
+    TU -> UI: 10.1. Klik "Cancel"
+    UI -> C: 10.2. Cancel deletion
+    C --> UI: 10.3. Close dialog
+    UI --> TU: 10.4. Dialog ditutup tanpa penghapusan
+end
+
+@enduml

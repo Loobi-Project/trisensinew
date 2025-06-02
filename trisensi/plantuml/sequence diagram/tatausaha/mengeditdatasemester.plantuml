@@ -1,0 +1,55 @@
+@startuml
+title Sequence Diagram Mengedit Data Semester (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Semester ==
+TU -> UI: 1. Akses sidebar "Semester"
+UI -> C: 2. Request semester page
+C -> DB: 3. Get semester list
+DB --> C: 4. Return semester data
+C --> UI: 5. Load semester page
+UI --> TU: 6. Tampilkan halaman semester dengan daftar semester
+
+== Edit Semester ==
+TU -> UI: 7. Klik tombol "Edit" pada baris semester
+UI -> C: 8. Request edit mode for selected semester
+C -> DB: 9. Get semester data by ID
+DB --> C: 10. Return semester data
+C --> UI: 11. Enable edit mode
+UI --> TU: 12. Tampilkan form edit (field Batch dapat diedit)
+
+TU -> UI: 13. Ubah data di field "Batch"
+
+alt Simpan perubahan
+    TU -> UI: 14. Klik tombol simbol centang (simpan)
+    UI -> C: 15. Handle save submission
+    C -> C: 15.1. Validate form data
+    note right
+    - Batch tidak boleh kosong
+    - Batch maksimal 2 digit
+    end note
+    alt Data valid
+        C -> DB: 15.2. Update semester data
+        DB --> C: 15.3. Semester updated successfully
+        C -> DB: 15.4. Get updated semester list
+        DB --> C: 15.5. Return updated data
+        C --> UI: 15.6. Success response + refresh data
+        UI --> TU: 15.7. Tampilkan daftar semester terbaru (mode edit disabled)
+    else Data tidak valid
+        C --> UI: 15.2. Validation error
+        UI --> TU: 15.3. Tampilkan pesan error + tetap dalam mode edit
+        note right
+        - "Formulir Batch harus terisi"
+        - "Batch tidak boleh lebih dari 2 digit"
+        end note
+    end
+else Batal perubahan
+    TU -> UI: 14. Klik tombol simbol silang (batal)
+    UI -> C: 15. Cancel edit request
+    C --> UI: 16. Disable edit mode
+    UI --> TU: 17. Kembali ke tampilan normal (data tidak berubah)
+end
+@enduml

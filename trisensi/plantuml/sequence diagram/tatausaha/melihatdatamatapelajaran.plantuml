@@ -1,0 +1,17 @@
+@startuml
+title Sequence Diagram Melihat Data Mata Pelajaran (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Data Mata Pelajaran ==
+TU -> UI: 1. Akses menu "Mata Pelajaran"
+UI -> C: 2. Request data mata pelajaran
+C -> DB: 3. Get subjects data
+DB --> C: 4. Return subjects list
+C --> UI: 5. Load subjects page
+UI --> TU: 6. Tampilkan daftar mata pelajaran
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+title Sequence Diagram Menghapus Format Surat Izin Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Template ==
+TU -> UI: 1. Akses menu "Presensi Siswa" > "Template Surat Izin"
+UI -> C: 2. Request template page
+C -> DB: 3. Get templates list
+DB --> C: 4. Return templates data
+C --> UI: 5. Load template page
+UI --> TU: 6. Tampilkan daftar template surat
+
+== Hapus Template Terpilih ==
+TU -> UI: 7. Pilih template (checkbox) + klik "Hapus [jumlah] Terpilih"
+UI -> C: 8. Request delete selected templates
+
+alt Tidak ada template terpilih
+    C --> UI: 8.1. Validation error
+    UI --> TU: 8.2. "Pilih minimal satu template untuk dihapus"
+else Ada template terpilih
+    C --> UI: 8.1. Show confirmation dialog
+    UI --> TU: 8.2. "Yakin hapus [jumlah] template surat?"
+    
+    alt User konfirmasi
+        TU -> UI: 8.3. Klik "Ya, Hapus"
+        UI -> C: 8.4. Confirm deletion
+        C -> DB: 8.5. Delete selected templates
+        
+        alt Penghapusan berhasil
+            DB --> C: 8.6. Success
+            C -> DB: 8.7. Get updated templates
+            DB --> C: 8.8. Return updated data
+            C --> UI: 8.9. Success + refresh data
+            UI --> TU: 8.10. "Berhasil menghapus template" + update tampilan
+            note right
+            Tampilkan halaman kosong 
+            jika semua template terhapus
+            end note
+        else Penghapusan gagal
+            DB --> C: 8.6. Error
+            C --> UI: 8.7. Error response
+            UI --> TU: 8.8. "Gagal menghapus template"
+        end
+        
+    else User batal
+        TU -> UI: 8.3. Klik "Batal"
+        UI -> C: 8.4. Cancel deletion
+        C --> UI: 8.5. Close dialog
+        UI --> TU: 8.6. Dialog ditutup
+    end
+end
+
+@enduml

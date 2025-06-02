@@ -1,0 +1,98 @@
+@startuml
+title Sequence Diagram Scan QR Presensi Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary View as V
+control Controller as C
+entity Model as M
+boundary "Camera API" as CAM
+
+== Akses Halaman QR Presensi ==
+
+TU -> V: 1. Akses Dashboard
+V --> TU: Tampilkan Dashboard
+
+TU -> V: 2. Pilih "Presensi Siswa" > "Scan QR Presensi"
+V -> C: Handle navigation
+C -> M: Get school schedule & current time
+M --> C: Return time data
+C -> V: Load QR scan page
+V --> TU: Tampilkan halaman QR Presensi
+
+== Proses Scan QR ==
+
+TU -> V: 3. Tekan "Mulai Pemindaian"
+V -> C: Handle scan request
+C -> CAM: Request camera permission
+
+alt Camera Permission Granted
+    CAM --> C: Permission granted
+    C -> V: Initialize camera
+    V -> CAM: Activate camera
+    CAM --> V: Camera ready
+    V --> TU: Tampilkan interface kamera
+    
+    TU -> V: 4. Arahkan kamera ke QR Code siswa
+    V -> CAM: Capture QR code
+    CAM --> V: QR data detected
+    V -> C: Process QR data
+    
+    C -> M: Validate QR & get student data
+    M --> C: Return validation result
+    
+    alt Valid QR Code
+        C -> M: Check time & record attendance
+        
+        alt Waktu Normal (Sebelum jam masuk)
+            M --> C: Status "Hadir" recorded
+            C -> V: Show success
+            V --> TU: "Presensi berhasil - Status: Hadir"
+            
+        else Terlambat (Setelah jam masuk)
+            M --> C: Status "Terlambat" recorded
+            C -> V: Show success
+            V --> TU: "Presensi berhasil - Status: Terlambat"
+            
+        else Di Luar Jam Operasional
+            M --> C: Time validation failed
+            C -> V: Show error
+            V --> TU: "Presensi tidak dapat dijalankan"
+        end
+        
+    else Invalid QR Code
+        M --> C: Invalid student data
+        C -> V: Show error
+        V --> TU: "QR Code tidak valid"
+    end
+    
+    group After Successful Scan
+        C -> M: Get updated attendance summary
+        M --> C: Return attendance data
+        C -> V: Update display & reset camera
+        V --> TU: Tampilkan ringkasan + siap scan berikutnya
+    end
+    
+else Camera Permission Denied
+    CAM --> C: Permission denied
+    C -> V: Show permission error
+    V --> TU: "Izin kamera diperlukan untuk scan"
+end
+
+note over TU, M
+**Pre-kondisi:**
+- Tata Usaha login di dashboard
+- Siswa terdaftar dalam sistem
+
+**Post-kondisi:**
+- Data kehadiran siswa tercatat dengan status:
+  * "Hadir" - scan sebelum jam masuk
+  * "Terlambat" - scan setelah jam masuk
+  * Error - scan di luar jam operasional
+
+**Validasi:**
+- QR Code harus valid dan terdaftar
+- Waktu scan dalam jam operasional sekolah
+- Camera permission diperlukan
+end note
+
+@enduml

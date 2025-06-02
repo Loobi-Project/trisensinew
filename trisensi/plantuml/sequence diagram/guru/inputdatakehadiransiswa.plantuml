@@ -1,0 +1,74 @@
+@startuml
+title Sequence Diagram Input Data Kehadiran Siswa ke Mata Pelajaran (Guru)
+actor "Guru" as G
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Rekap Presensi ==
+G -> UI: 1. Akses sidebar "Rekap Presensi Siswa"
+UI -> C: 2. Request rekap presensi page
+C -> DB: 3. Get data kelas yang diampu guru
+DB --> C: 4. Return kelas data
+C -> DB: 5. Get mata pelajaran yang diampu guru
+DB --> C: 6. Return mata pelajaran data
+C -> C: 7. Get current date (tanggal login)
+C --> UI: 8. Load rekap presensi page
+UI --> G: 9. Tampilkan halaman dengan dropdown kelas, tanggal otomatis, dan dropdown mata pelajaran
+
+== Pilih Kelas ==
+G -> UI: 10. Pilih kelas dari dropdown
+UI -> C: 11. Handle kelas selection
+
+alt Kelas dipilih
+    C -> DB: 11.1. Get siswa data berdasarkan kelas
+    DB --> C: 11.2. Return daftar siswa
+    C --> UI: 11.3. Load siswa data
+    UI --> G: 11.4. Tampilkan daftar siswa dalam kelas
+else Kelas tidak dipilih
+    UI --> G: 11.1. Data siswa tidak ditampilkan
+    note right
+    - Daftar siswa kosong
+    - Menunggu pemilihan kelas
+    end note
+end
+
+== Pilih Mata Pelajaran ==
+G -> UI: 12. Pilih mata pelajaran dari dropdown
+UI -> C: 13. Handle mata pelajaran selection
+C -> DB: 14. Get existing presensi data (jika ada)
+DB --> C: 15. Return presensi data
+C --> UI: 16. Update form dengan data existing
+UI --> G: 17. Enable form presensi dan tombol simpan
+
+== Input Data Presensi ==
+G -> UI: 18. Centang semua siswa atau pilih individual
+UI --> G: 19. Update status kehadiran siswa
+G -> UI: 20. Klik tombol "Simpan Data"
+UI -> C: 21. Handle save presensi request
+
+alt Data lengkap (kelas dan mata pelajaran dipilih)
+    C -> C: 21.1. Validate form data
+    note right
+    - Kelas harus dipilih
+    - Mata pelajaran harus dipilih
+    - Minimal satu siswa tercentang
+    end note
+    C -> DB: 21.2. Save/update presensi data
+    DB --> C: 21.3. Presensi saved successfully
+    C --> UI: 21.4. Success response
+    UI --> G: 21.5. Tampilkan pesan sukses dan refresh data
+    note right
+    "Data rekap kehadiran berhasil disimpan"
+    end note
+else Data tidak lengkap
+    C -> C: 21.1. Validate form data
+    C --> UI: 21.2. Validation error
+    UI --> G: 21.3. Tampilkan tombol "Simpan Data" terkunci
+    note right
+    - "Pilih kelas terlebih dahulu"
+    - "Pilih mata pelajaran terlebih dahulu"
+    - Tombol "Simpan Data" disabled
+    end note
+end
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+title Sequence Diagram Melihat Data Rekap Presensi Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary View as V
+control Controller as C
+entity Model as M
+boundary "File System" as FS
+
+== Akses Halaman Rekap Presensi ==
+
+TU -> V: 1. Akses Dashboard
+V --> TU: Tampilkan Dashboard
+
+TU -> V: 2. Pilih "Presensi Siswa" > "Rekap Kehadiran"
+V -> C: Handle navigation
+C -> M: Get today's attendance data
+M --> C: Return attendance data & statistics
+C -> V: Load rekap page with filters
+V --> TU: Tampilkan halaman rekap + filter options
+
+== Lihat dan Filter Data ==
+
+group Filter Data
+    TU -> V: 3. Pilih filter (tanggal/angkatan/kelas/semester)
+    V -> C: Handle filter selection
+    C -> M: Get filtered attendance data
+    M --> C: Return filtered data & statistics
+    C -> V: Update display
+    V --> TU: Tampilkan data sesuai filter
+end
+
+== Fitur Tambahan ==
+
+group Export Data
+    TU -> V: 4. Klik "Export CSV"
+    V -> C: Handle export request
+    C -> M: Get current data
+    M --> C: Return data for export
+    C -> FS: Generate CSV file
+    FS --> C: CSV file created
+    C -> V: Trigger download
+    V --> TU: Download file CSV
+end
+
+group Navigation
+    alt navigate to QR scan
+        TU -> V: 5. Klik "Scan QR Presensi"
+        V -> C: Handle navigation
+        C -> V: Redirect to QR page
+        V --> TU: Diarahkan ke halaman QR Presensi
+    end
+end
+
+group Reset Filter
+    alt reset filters
+        TU -> V: 6. Reset filter
+        V -> C: Handle reset
+        C -> M: Get default data
+        M --> C: Return unfiltered data
+        C -> V: Reset display
+        V --> TU: Tampilkan data default
+    end
+end
+
+note over TU, M
+**Pre-kondisi:**
+- Tata Usaha login di dashboard
+- Data presensi tersedia dalam sistem
+
+**Post-kondisi:**
+- Menampilkan rekap kehadiran siswa
+- Data dapat difilter (tanggal, angkatan, kelas, semester)
+- Data dapat diekspor ke CSV
+- Statistik kehadiran ditampilkan sesuai filter
+
+**Filter yang tersedia:**
+- Tanggal, Angkatan, Kelas, Semester
+- Kombinasi multiple filter
+- Reset ke tampilan default
+end note
+
+@enduml

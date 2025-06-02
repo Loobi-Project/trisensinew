@@ -1,0 +1,43 @@
+@startuml
+title Sequence Diagram Mengedit Nama Format Surat Izin Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Template ==
+TU -> UI: 1. Akses menu "Presensi Siswa" > "Template Surat Izin"
+UI -> C: 2. Request template page
+C -> DB: 3. Get templates list
+DB --> C: 4. Return templates data
+C --> UI: 5. Load template page
+UI --> TU: 6. Tampilkan daftar template surat
+
+== Edit Nama Template ==
+TU -> UI: 7. Klik tombol "Edit" pada kartu template
+UI -> C: 8. Request edit mode
+C --> UI: 9. Enable edit mode
+UI --> TU: 10. Tampilkan field edit nama surat
+
+TU -> UI: 11. Edit nama surat + klik tombol "✓" / "✗"
+UI -> C: 12. Handle edit action
+
+alt Simpan perubahan (tombol ✓)
+    C -> C: 12.1. Validate nama surat
+    C -> DB: 12.2. Update template name
+    DB --> C: 12.3. Update successful
+    C -> DB: 12.4. Get updated templates list
+    DB --> C: 12.5. Return updated data
+    C --> UI: 12.6. Success response + refresh data
+    UI --> TU: 12.7. "Nama template berhasil diubah" + tampilkan daftar terbaru
+else Batal edit (tombol ✗)
+    C --> UI: 12.1. Cancel edit mode
+    UI --> TU: 12.2. Kembali ke tampilan normal tanpa perubahan
+else Nama surat kosong
+    C -> C: 12.1. Validate nama surat
+    C --> UI: 12.2. Validation error
+    UI --> TU: 12.3. "Nama surat tidak boleh kosong"
+end
+
+@enduml

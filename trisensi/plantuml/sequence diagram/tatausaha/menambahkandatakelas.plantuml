@@ -1,0 +1,41 @@
+@startuml
+title Sequence Diagram Menambahkan Data Kelas (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Kelas ==
+TU -> UI: 1. Akses sidebar "Kelas"
+UI -> C: 2. Request kelas page
+C -> DB: 3. Get kelas list
+DB --> C: 4. Return kelas data
+C --> UI: 5. Load kelas page
+UI --> TU: 6. Tampilkan halaman kelas
+
+== Tambah Kelas Baru ==
+TU -> UI: 7. Tampilkan form tambah kelas
+UI --> TU: 8. Tampilkan form (field Nama Kelas)
+TU -> UI: 9. Input nama kelas + klik "Tambah"
+UI -> C: 10. Handle form submission
+
+alt Data valid
+    C -> C: 10.1. Validate form data
+    note right
+    - Nama Kelas tidak boleh kosong
+    end note
+    C -> DB: 10.2. Create new kelas
+    DB --> C: 10.3. Kelas created successfully
+    C -> DB: 10.4. Get updated kelas list
+    DB --> C: 10.5. Return updated data
+    C --> UI: 10.6. Success response + refresh data
+    UI --> TU: 10.7. Tampilkan daftar kelas terbaru
+else Data tidak valid
+    C -> C: 10.1. Validate form data
+    C --> UI: 10.2. Validation error
+    UI --> TU: 10.3. Tampilkan pesan error:
+    note right
+    - "Formulir Nama Kelas harus terisi"
+    end note
+end
+@enduml

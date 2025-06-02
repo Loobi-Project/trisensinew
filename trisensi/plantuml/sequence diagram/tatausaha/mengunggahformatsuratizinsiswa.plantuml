@@ -1,0 +1,45 @@
+@startuml
+title Sequence Diagram Mengunggah Format Surat Izin Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Template ==
+TU -> UI: 1. Akses menu "Presensi Siswa" > "Template Surat Izin"
+UI -> C: 2. Request template page
+C -> DB: 3. Get existing templates
+DB --> C: 4. Return templates data
+C --> UI: 5. Load template page
+UI --> TU: 6. Tampilkan halaman template surat
+
+== Upload Template Baru ==
+TU -> UI: 7. Klik "Tambah Template" / "Tambah Template Baru"
+UI -> C: 8. Request form template
+C --> UI: 9. Load upload form
+UI --> TU: 10. Tampilkan form (nama surat + upload file DOCX)
+
+TU -> UI: 11. Input nama surat + pilih file DOCX + klik "Simpan Template"
+UI -> C: 12. Handle form submission
+
+alt Data valid dan file DOCX
+    C -> C: 12.1. Validate form data & file format
+    C -> DB: 12.2. Save template data & file
+    DB --> C: 12.3. Template saved successfully
+    C -> DB: 12.4. Get updated templates list
+    DB --> C: 12.5. Return updated data
+    C --> UI: 12.6. Success response + refresh data
+    UI --> TU: 12.7. "Template berhasil disimpan" + tampilkan daftar template
+else Data tidak valid / file bukan DOCX
+    C -> C: 12.1. Validate form data & file format
+    C --> UI: 12.2. Validation error
+    UI --> TU: 12.3. Tampilkan pesan error:
+    note right
+    - "Nama surat wajib diisi"
+    - "File harus berformat DOCX"
+    - "File tidak boleh kosong"
+    end note
+end
+
+@enduml

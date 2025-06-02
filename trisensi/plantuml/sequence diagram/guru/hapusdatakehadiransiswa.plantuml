@@ -1,0 +1,86 @@
+@startuml
+title Sequence Diagram Hapus Data Kehadiran Siswa ke Mata Pelajaran (Guru)
+actor "Guru" as G
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Rekap Presensi ==
+G -> UI: 1. Akses sidebar "Rekap Presensi Siswa"
+UI -> C: 2. Request rekap presensi page
+C -> DB: 3. Get data kelas yang diampu guru
+DB --> C: 4. Return kelas data
+C -> DB: 5. Get mata pelajaran yang diampu guru
+DB --> C: 6. Return mata pelajaran data
+C -> C: 7. Get current date (tanggal login)
+C --> UI: 8. Load rekap presensi page
+UI --> G: 9. Tampilkan halaman dengan dropdown kelas, tanggal otomatis, dan dropdown mata pelajaran
+
+== Pilih Kelas ==
+G -> UI: 10. Pilih kelas dari dropdown
+UI -> C: 11. Handle kelas selection
+
+alt Kelas dipilih
+    C -> DB: 11.1. Get siswa data berdasarkan kelas
+    DB --> C: 11.2. Return daftar siswa
+    C --> UI: 11.3. Load siswa data
+    UI --> G: 11.4. Tampilkan daftar siswa dalam kelas
+else Kelas tidak dipilih
+    UI --> G: 11.1. Data siswa tidak ditampilkan
+    note right
+    - Daftar siswa kosong
+    - Menunggu pemilihan kelas
+    end note
+end
+
+== Pilih Mata Pelajaran ==
+G -> UI: 12. Pilih mata pelajaran dari dropdown
+UI -> C: 13. Handle mata pelajaran selection
+C -> DB: 14. Get existing presensi data
+DB --> C: 15. Return presensi data yang sudah direkap
+C --> UI: 16. Update form dengan data existing
+UI --> G: 17. Tampilkan data siswa yang telah direkap dan enable tombol "Hapus Semua Data"
+
+== Hapus Data Presensi ==
+G -> UI: 18. Klik tombol "Hapus Semua Data"
+UI -> C: 19. Handle delete presensi request
+
+alt Data lengkap (kelas dan mata pelajaran dipilih)
+    C -> C: 19.1. Validate form data
+    note right
+    - Kelas harus dipilih
+    - Mata pelajaran harus dipilih
+    - Ada data presensi yang bisa dihapus
+    end note
+    UI -> UI: 19.2. Tampilkan konfirmasi hapus
+    UI --> G: 19.3. Dialog konfirmasi: "Yakin hapus semua data presensi?"
+    
+    alt Konfirmasi hapus
+        G -> UI: 19.4. Klik "Ya, Hapus"
+        UI -> C: 19.5. Confirm delete request
+        C -> DB: 19.6. Delete all presensi data for selected kelas and mata pelajaran
+        DB --> C: 19.7. Data deleted successfully
+        C --> UI: 19.8. Success response
+        UI --> G: 19.9. Tampilkan pesan sukses dan refresh halaman
+        note right
+        "Semua data kehadiran berhasil dihapus"
+        end note
+    else Batal hapus
+        G -> UI: 19.4. Klik "Batal"
+        UI --> G: 19.5. Tutup dialog konfirmasi
+        note right
+        - Tidak ada perubahan data
+        - Kembali ke halaman presensi
+        end note
+    end
+else Data tidak lengkap
+    C -> C: 19.1. Validate form data
+    C --> UI: 19.2. Validation error
+    UI --> G: 19.3. Tampilkan tombol "Hapus Semua Data" terkunci
+    note right
+    - "Pilih kelas terlebih dahulu"
+    - "Pilih mata pelajaran terlebih dahulu"
+    - Tombol "Hapus Semua Data" disabled
+    end note
+end
+@enduml

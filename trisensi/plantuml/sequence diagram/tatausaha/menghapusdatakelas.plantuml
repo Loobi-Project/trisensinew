@@ -1,0 +1,42 @@
+@startuml
+title Sequence Diagram Menghapus Data Kelas (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Kelas ==
+TU -> UI: 1. Akses sidebar "Kelas"
+UI -> C: 2. Request kelas page
+C -> DB: 3. Get kelas list
+DB --> C: 4. Return kelas data
+C --> UI: 5. Load kelas page
+UI --> TU: 6. Tampilkan halaman kelas dengan daftar kelas
+
+== Mulai Hapus Kelas ==
+TU -> UI: 7. Klik tombol "Hapus" pada kelas tertentu
+UI -> C: 8. Request data kelas untuk konfirmasi
+C -> DB: 9. Get kelas data by ID
+DB --> C: 10. Return kelas data
+C --> UI: 11. Load confirmation dialog
+UI --> TU: 12. Tampilkan jendela konfirmasi hapus
+
+== Proses Hapus Kelas ==
+alt Konfirmasi hapus
+    TU -> UI: 13. Klik tombol "Hapus" di jendela konfirmasi
+    UI -> C: 14. Handle delete request
+    C -> DB: 15. Delete kelas data
+    DB --> C: 16. Kelas deleted successfully
+    C -> DB: 17. Get updated kelas list
+    DB --> C: 18. Return updated data
+    C --> UI: 19. Success response + refresh data
+    UI --> TU: 20. Tampilkan daftar kelas dengan data terbaru
+else Batal hapus
+    TU -> UI: 13. Klik tombol "Batal" di jendela konfirmasi
+    UI --> TU: 14. Tutup jendela konfirmasi
+    note right
+    - Tidak ada perubahan data
+    - Kembali ke halaman kelas
+    end note
+end
+@enduml

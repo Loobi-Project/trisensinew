@@ -1,0 +1,15 @@
+@startuml
+title Sequence Diagram Melihat Data Kelas (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Melihat Data Kelas ==
+TU -> UI: 1. Akses sidebar "Kelas"
+UI -> C: 2. Request kelas page
+C -> DB: 3. Get kelas list
+DB --> C: 4. Return kelas data
+C --> UI: 5. Load kelas page
+UI --> TU: 6. Tampilkan halaman kelas dengan daftar kelas
+@enduml

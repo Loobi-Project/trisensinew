@@ -1,0 +1,43 @@
+@startuml
+title Sequence Diagram Menambahkan Data Semester (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Semester ==
+TU -> UI: 1. Akses sidebar "Semester"
+UI -> C: 2. Request semester page
+C -> DB: 3. Get semester list
+DB --> C: 4. Return semester data
+C --> UI: 5. Load semester page
+UI --> TU: 6. Tampilkan halaman semester
+
+== Tambah Semester Baru ==
+TU -> UI: 7. Tampilkan form tambah semester
+UI --> TU: 8. Tampilkan form (field Batch - integer)
+TU -> UI: 9. Input batch (integer) + klik "Tambah"
+UI -> C: 10. Handle form submission
+
+alt Data valid
+    C -> C: 10.1. Validate form data
+    note right
+    - Batch tidak boleh kosong
+    - Batch maksimal 2 digit
+    end note
+    C -> DB: 10.2. Create new semester
+    DB --> C: 10.3. Semester created successfully
+    C -> DB: 10.4. Get updated semester list
+    DB --> C: 10.5. Return updated data
+    C --> UI: 10.6. Success response + refresh data
+    UI --> TU: 10.7. Tampilkan daftar semester terbaru
+else Data tidak valid
+    C -> C: 10.1. Validate form data
+    C --> UI: 10.2. Validation error
+    UI --> TU: 10.3. Tampilkan pesan error:
+    note right
+    - "Formulir Batch harus terisi"
+    - "Batch tidak boleh lebih dari 2 digit"
+    end note
+end
+@enduml

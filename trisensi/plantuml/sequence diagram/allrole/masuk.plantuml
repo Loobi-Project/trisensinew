@@ -1,0 +1,75 @@
+@startuml
+title Sequence Diagram Masuk (Tata Usaha, Guru, Super Admin)
+
+actor User as U
+boundary View as V
+control Controller as C
+entity Model as M
+
+== Login Process ==
+U -> V: 1. Akses halaman masuk
+V --> U: Tampilkan form login
+
+U -> V: 2. Input kredensial dan submit
+V -> C: 2.1: Handle login event
+
+alt successful authentication
+    C -> M: 2.1.1: Validate credentials
+    M --> C: 2.1.2: Authentication result (valid)
+    C -> M: 2.1.3: Get user data
+    M --> C: 2.1.4: User data
+    C -> V: 2.1.5: Update view (redirect dashboard)
+    V --> U: 2.1.6: Display dashboard
+    
+    group Post-kondisi khusus
+        alt first time login (Tata Usaha/Guru)
+            C -> V: Show NIK/NUPTK form
+            V --> U: Display form
+            U -> V: Fill NIK/NUPTK
+            V -> C: Submit form data
+            C -> M: Save NIK/NUPTK
+            M --> C: Data saved
+            
+            alt user is Guru
+                C -> V: Show confirmation message
+                V --> U: "Akun belum aktif, menunggu konfirmasi Tata Usaha"
+            end
+        end
+    end
+    
+else authentication failure
+    C -> M: 2.1.1: Validate credentials
+    M --> C: 2.1.2: Authentication result (invalid)
+    C -> V: 2.1.5: Update view (error message)
+    V --> U: 2.1.6: Display error message
+    
+else validation error
+    C -> V: Show validation error
+    V --> U: Display error (empty fields, wrong format, etc.)
+end
+
+== Super Admin Login ==
+U -> V: 1. Akses halaman admin
+V --> U: Tampilkan form kode admin
+
+U -> V: 2. Input kode admin
+V -> C: 2.1: Handle admin login
+
+alt valid admin code
+    C -> M: 2.1.1: Validate admin code
+    M --> C: 2.1.2: Code validation result (valid)
+    C -> V: 2.1.3: Update view (redirect admin dashboard)
+    V --> U: 2.1.4: Display admin dashboard
+    
+else invalid admin code
+    C -> M: 2.1.1: Validate admin code
+    M --> C: 2.1.2: Code validation result (invalid)
+    C -> V: 2.1.3: Update view (error message)
+    V --> U: 2.1.4: Display error "Kode tidak valid"
+    
+else empty code
+    C -> V: Show validation error
+    V --> U: Display "Wajib mengisi kode admin"
+end
+
+@enduml

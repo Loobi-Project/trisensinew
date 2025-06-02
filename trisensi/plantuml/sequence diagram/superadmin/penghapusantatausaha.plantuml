@@ -1,0 +1,53 @@
+@startuml
+title Sequence Diagram Penghapusan Akun Tata Usaha (Super Admin)
+
+actor "Super Admin" as SA
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Tata Usaha ==
+SA -> UI: 1. Akses menu "Buat Akun Tata Usaha"
+UI -> C: 2. Request daftar akun
+C -> DB: 3. Get accounts data
+DB --> C: 4. Return accounts list
+C --> UI: 5. Load accounts page
+UI --> SA: 6. Tampilkan daftar akun Tata Usaha
+
+== Pilih dan Hapus Akun ==
+SA -> UI: 7. Pilih akun (checkbox) + klik "Hapus Terpilih"
+UI -> C: 8. Request delete selected accounts
+
+alt Tidak ada akun terpilih
+    C --> UI: 8.1. Validation error
+    UI --> SA: 8.2. "Pilih minimal satu akun untuk dihapus"
+else Ada akun terpilih
+    C --> UI: 8.1. Show confirmation dialog
+    UI --> SA: 8.2. "Yakin hapus [jumlah] akun?"
+    
+    alt User konfirmasi
+        SA -> UI: 8.3. Klik "Ya, Hapus"
+        UI -> C: 8.4. Confirm deletion
+        C -> DB: 8.5. Delete selected accounts
+        
+        alt Penghapusan berhasil
+            DB --> C: 8.6. Success
+            C -> DB: 8.7. Get updated accounts
+            DB --> C: 8.8. Return updated data
+            C --> UI: 8.9. Success + refresh data
+            UI --> SA: 8.10. "Berhasil menghapus akun" + update tabel
+        else Penghapusan gagal
+            DB --> C: 8.6. Error
+            C --> UI: 8.7. Error response
+            UI --> SA: 8.8. "Gagal menghapus akun"
+        end
+        
+    else User batal
+        SA -> UI: 8.3. Klik "Batal"
+        UI -> C: 8.4. Cancel deletion
+        C --> UI: 8.5. Close dialog
+        UI --> SA: 8.6. Dialog ditutup
+    end
+end
+
+@enduml

@@ -1,0 +1,43 @@
+@startuml
+title Sequence Diagram Menghapus Data Tahun Ajar (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Tahun Ajar ==
+TU -> UI: 1. Akses sidebar "Tahun Ajar"
+UI -> C: 2. Request tahun ajar page
+C -> DB: 3. Get tahun ajar list
+DB --> C: 4. Return tahun ajar data
+C --> UI: 5. Load tahun ajar page
+UI --> TU: 6. Tampilkan halaman tahun ajar dengan daftar tahun ajar
+
+== Hapus Tahun Ajar ==
+TU -> UI: 7. Klik tombol "Hapus" pada baris tahun ajar
+UI -> C: 8. Request delete confirmation
+C --> UI: 9. Show confirmation dialog
+UI --> TU: 10. Tampilkan jendela konfirmasi penghapusan
+
+alt Konfirmasi hapus
+    TU -> UI: 11. Klik tombol "Hapus" di jendela konfirmasi
+    UI -> C: 12. Handle delete confirmation
+    C -> DB: 13. Delete tahun ajar data
+    DB --> C: 14. Tahun ajar deleted successfully
+    C -> DB: 15. Get updated tahun ajar list
+    DB --> C: 16. Return updated data
+    C --> UI: 17. Success response + refresh data
+    UI --> TU: 18. Tutup jendela konfirmasi + tampilkan daftar tahun ajar terbaru
+    note right
+    Data tahun ajar berhasil dihapus
+    end note
+else Batal hapus
+    TU -> UI: 11. Klik tombol "Batal" di jendela konfirmasi
+    UI -> C: 12. Cancel delete request
+    C --> UI: 13. Close confirmation dialog
+    UI --> TU: 14. Tutup jendela konfirmasi + kembali ke halaman tahun ajar
+    note right
+    Data tahun ajar tidak dihapus
+    end note
+end
+@enduml

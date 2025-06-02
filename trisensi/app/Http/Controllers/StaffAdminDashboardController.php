@@ -12,6 +12,7 @@ use App\Models\AbsenceLetterTemplate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\Models\Staff;
+use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Subject;
 use App\Models\Semester;
@@ -166,13 +167,63 @@ class StaffAdminDashboardController extends Controller
 
     public function indexconfirmStudent()
     {
-        return inertia('staffadmin/student-confirmation');
+        $students = Student::where('is_active', 0)
+            ->whereNotNull('nis')
+            ->where('nis', '!=', '')
+            ->with(['user', 'academicYear', 'role'])
+            ->get()
+            ->map(function ($student) {
+                return [
+                    'id' => $student->id,
+                    'name' => optional($student->user)->name ?? 'Tidak ada nama',
+                    'nis' => $student->nis ?? 'Tidak ada NIS',
+                    'academic_year' => optional($student->academicYear)->batch ?? 'Tidak ada tahun akademik',
+                    'academic_year_description' => optional($student->academicYear)->description ?? null,
+                    'role' => optional($student->role)->name ?? 'Tidak ada role',
+                    'is_active' => $student->is_active,
+                    'last_login' => $student->last_login,
+                ];
+            });
+
+        // Mengirimkan data student ke view menggunakan Inertia
+        return Inertia::render('staffadmin/student-confirmation', [
+            'students' => $students,
+        ]);
     }
 
-    // public function subjects()
-    // {
-    //     return inertia('staffadmin/subjects');
-    // }
+    public function updateConfirmStudent(Student $student)
+    {
+        // Mengubah status student menjadi aktif (is_active = 1)
+        $student->update(['is_active' => 1]);
+
+        // Redirect kembali ke halaman konfirmasi dengan pesan sukses
+        return redirect()->route('staffadmin.confirm-student')->with('success', 'Student berhasil dikonfirmasi.');
+    }
+
+    public function getStudent()
+    {
+        $students = Student::with(['user', 'role', 'academicYear'])
+            ->whereHas('role', function ($query) {
+                $query->where('name', 'student'); // atau sesuaikan dengan nama role student di database Anda
+            })
+            ->get()
+            ->map(function ($student) {
+                return [
+                    'id' => $student->id,
+                    'name' => optional($student->user)->name ?? 'Tidak ada nama',
+                    'email' => optional($student->user)->email ?? 'Tidak ada email',
+                    'nis' => $student->nis ?? 'Tidak ada NIS',
+                    'academic_year' => optional($student->academicYear)->batch ?? 'Tidak ada tahun akademik',
+                    'academic_year_description' => optional($student->academicYear)->description ?? null,
+                    'role' => optional($student->role)->name ?? 'Tidak ada role',
+                    'is_active' => $student->is_active,
+                    'last_login' => $student->last_login,
+                    'user' => $student->user, // untuk akses langsung di frontend
+                ];
+            });
+
+        return response()->json($students);
+    }
 
     public function subjects()
     {

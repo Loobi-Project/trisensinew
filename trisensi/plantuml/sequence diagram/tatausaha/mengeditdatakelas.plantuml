@@ -1,0 +1,57 @@
+@startuml
+title Sequence Diagram Mengedit Data Kelas (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Kelas ==
+TU -> UI: 1. Akses sidebar "Kelas"
+UI -> C: 2. Request kelas page
+C -> DB: 3. Get kelas list
+DB --> C: 4. Return kelas data
+C --> UI: 5. Load kelas page
+UI --> TU: 6. Tampilkan halaman kelas dengan daftar kelas
+
+== Mulai Edit Kelas ==
+TU -> UI: 7. Klik tombol "Edit" pada kelas tertentu
+UI -> C: 8. Request data kelas untuk edit
+C -> DB: 9. Get kelas data by ID
+DB --> C: 10. Return kelas data
+C --> UI: 11. Load edit form
+UI --> TU: 12. Tampilkan form edit dengan data kelas saat ini
+
+== Proses Edit Kelas ==
+TU -> UI: 13. Edit nama kelas di formulir
+UI --> TU: 14. Form menampilkan perubahan
+
+alt Menyimpan perubahan
+    TU -> UI: 15. Klik tombol simbol centang (simpan)
+    UI -> C: 16. Handle form submission dengan data baru
+    C -> C: 16.1. Validate form data
+    note right
+    - Nama Kelas tidak boleh kosong
+    end note
+    alt Data valid
+        C -> DB: 16.2. Update kelas data
+        DB --> C: 16.3. Kelas updated successfully
+        C -> DB: 16.4. Get updated kelas list
+        DB --> C: 16.5. Return updated data
+        C --> UI: 16.6. Success response + refresh data
+        UI --> TU: 16.7. Tampilkan daftar kelas yang telah diedit
+    else Data tidak valid
+        C --> UI: 16.2. Validation error
+        UI --> TU: 16.3. Tampilkan pesan error:
+        note right
+        - "Formulir Nama Kelas harus terisi"
+        end note
+    end
+else Membatalkan perubahan
+    TU -> UI: 15. Klik tombol simbol silang (batal)
+    UI -> C: 16. Request reload kelas list
+    C -> DB: 17. Get kelas list
+    DB --> C: 18. Return kelas data
+    C --> UI: 19. Refresh page
+    UI --> TU: 20. Tampilkan daftar kelas tanpa perubahan
+end
+@enduml

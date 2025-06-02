@@ -204,30 +204,28 @@ export default function PresenceRecapEntry({ classes, subjects }) {
         // Get recapped by subject
         const recappedBySubject = getRecappedBySubject();
 
-        // Create CSV content
+        // Create proper CSV content with standard formatting
         let csvContent = 'data:text/csv;charset=utf-8,';
 
-        recappedBySubject.forEach((group, groupIndex) => {
-            // Add header information
-            csvContent += 'SMA NEGERI 3 PURWOKERTO\r\n';
-            csvContent += 'REKAP PRESENSI SISWA\r\n\r\n';
-            csvContent += `Kelas,${group.class_name}\r\n`;
-            csvContent += `Mata Pelajaran,${group.subject_name}\r\n`;
-            csvContent += `Tanggal,${formatDate(group.presence_date)}\r\n\r\n`;
+        // Add CSV headers (only once at the top)
+        csvContent += 'Kelas,Mata Pelajaran,Tanggal,NIS,Nama Siswa,Status Presensi\r\n';
 
-            // Add table headers
-            csvContent += 'No,NIS,Nama Siswa,Status Presensi\r\n';
-
-            // Add student data
-            group.students.forEach((student, idx) => {
-                const status = student.presence_status_name.charAt(0).toUpperCase() + student.presence_status_name.slice(1);
-                csvContent += `${idx + 1},${student.nis},"${student.student_name}",${status}\r\n`;
-            });
-
-            // Add extra line between different subjects
-            if (groupIndex < recappedBySubject.length - 1) {
-                csvContent += '\r\n\r\n';
+        // Add data rows for all students across all subjects
+        recappedBySubject.forEach((group, index) => {
+            // If this isn't the first group, add a blank line as subject separator
+            if (index > 0) {
+                csvContent += '\r\n';
             }
+
+            const className = group.class_name;
+            const subjectName = group.subject_name;
+            const presenceDate = formatDate(group.presence_date);
+
+            // Add each student as a row in the CSV
+            group.students.forEach((student) => {
+                const status = student.presence_status_name.charAt(0).toUpperCase() + student.presence_status_name.slice(1);
+                csvContent += `"${className}","${subjectName}","${presenceDate}","${student.nis}","${student.student_name}","${status}"\r\n`;
+            });
         });
 
         // Create download link
