@@ -53,10 +53,10 @@ function StatisticsBox({ title, value, color, isLoading = false }: StatisticsBox
     }, [value, isLoading]);
    
     return (
-        <div className="bg-white rounded-lg shadow-md p-4 md:p-6 flex flex-col h-full">
-            <h3 className="text-gray-500 text-sm md:text-base font-medium mb-2">{title}</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 flex flex-col h-full transition-colors duration-200">
+            <h3 className="text-gray-500 dark:text-gray-400 text-sm md:text-base font-medium mb-2">{title}</h3>
             {isLoading ? (
-                <div className="h-8 w-20 bg-gray-200 animate-pulse rounded"></div>
+                <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
             ) : (
                 <p 
                     ref={valueRef} 
@@ -86,6 +86,9 @@ export default function Dashboard({ totalAdminStaff = 0, totalTeachers = 0, tota
         teachers: totalTeachers === 0,
         students: totalStudents === 0
     });
+
+    // Referensi untuk chart terkini agar bisa diupdate mode-nya
+    const chartRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -141,8 +144,21 @@ export default function Dashboard({ totalAdminStaff = 0, totalTeachers = 0, tota
                     padding: 15,
                     font: {
                         size: 12
-                    }
+                    },
+                    color: 'currentColor' // Menggunakan warna teks yang sesuai dengan mode
                 }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+                borderWidth: 1,
+                padding: 10,
+                caretSize: 8,
+                cornerRadius: 4,
+                displayColors: true,
+                boxPadding: 3
             }
         }
     };
@@ -176,12 +192,13 @@ export default function Dashboard({ totalAdminStaff = 0, totalTeachers = 0, tota
                     />
                 </div>
 
-                <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-                    <h3 className="text-lg md:text-xl font-medium text-gray-700 mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 md:p-6 transition-colors duration-200">
+                    <h3 className="text-lg md:text-xl font-medium text-gray-700 dark:text-gray-200 mb-4">
                         Distribusi Data
                     </h3>
-                    <div className="h-64 md:h-80 w-full">
+                    <div className="h-64 md:h-80 w-full text-gray-900 dark:text-gray-100">
                         <Doughnut 
+                            ref={chartRef}
                             data={chartData} 
                             options={chartOptions}
                         />

@@ -1,0 +1,47 @@
+@startuml
+title Sequence Diagram Pendaftaran Akun Tata Usaha (Super Admin)
+
+actor "Super Admin" as SA
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Form Pendaftaran ==
+SA -> UI: 1. Akses menu "Buat Akun Tata Usaha"
+UI -> C: 2. Request form pendaftaran
+C --> UI: 3. Load registration form
+UI --> SA: 4. Tampilkan form pendaftaran
+
+== Submit Pendaftaran ==
+SA -> UI: 5. Input data (nama, email, password) + submit
+UI -> C: 6. Handle form submission
+C -> C: 7. Validate form data
+
+alt Data valid
+    C -> DB: 7.1. Check email availability
+    
+    alt Email tersedia
+        DB --> C: 7.2. Email available
+        C -> DB: 7.3. Create Tata Usaha account
+        DB --> C: 7.4. Account created successfully
+        C -> DB: 7.5. Get updated accounts list
+        DB --> C: 7.6. Return updated data
+        C --> UI: 7.7. Success response + refresh data
+        UI --> SA: 7.8. "Berhasil membuat akun" + update tabel
+    else Email sudah digunakan
+        DB --> C: 7.2. Email already exists
+        C --> UI: 7.3. Error response
+        UI --> SA: 7.4. "Email sudah digunakan"
+    end
+    
+else Data tidak valid
+    C --> UI: 7.1. Validation error
+    UI --> SA: 7.2. Tampilkan pesan error:
+    note right
+    - "Wajib mengisi semua formulir"
+    - "Wajib mengisi email" 
+    - "Kata sandi minimal 6 karakter"
+    end note
+end
+
+@enduml

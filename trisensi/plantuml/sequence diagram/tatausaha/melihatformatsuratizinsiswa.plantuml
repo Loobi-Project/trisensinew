@@ -1,0 +1,17 @@
+@startuml
+title Sequence Diagram Melihat Format Surat Izin Siswa (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Template Surat Izin ==
+TU -> UI: 1. Akses menu "Presensi Siswa" > "Template Surat Izin"
+UI -> C: 2. Request template surat izin
+C -> DB: 3. Get letter template data
+DB --> C: 4. Return template format
+C --> UI: 5. Load template page
+UI --> TU: 6. Tampilkan format surat izin siswa
+
+@enduml

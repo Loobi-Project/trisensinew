@@ -1,0 +1,57 @@
+@startuml
+title Sequence Diagram Pendaftaran Akun Siswa (Siswa)
+actor "Siswa" as S
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Pendaftaran ==
+S -> UI: 1. Akses halaman pendaftaran
+UI -> C: 2. Request pendaftaran page
+C -> DB: 3. Get data angkatan untuk dropdown
+DB --> C: 4. Return data angkatan
+C --> UI: 5. Load pendaftaran page
+UI --> S: 6. Tampilkan form pendaftaran (nama lengkap, NIS, email, password, konfirmasi password, dropdown angkatan)
+
+== Proses Pendaftaran ==
+S -> UI: 7. Isi formulir pendaftaran lengkap
+S -> UI: 8. Klik tombol "Buat Akun"
+UI -> C: 9. Handle form submission
+
+alt Data valid
+    C -> C: 9.1. Validate form data
+    note right
+    - Semua field harus terisi
+    - Email harus format valid
+    - Password minimal 8 karakter
+    - Konfirmasi password harus sama
+    - NIS tidak boleh duplikat
+    end note
+    C -> DB: 9.2. Check NIS dan email duplikat
+    DB --> C: 9.3. Return check result
+    alt Data tidak duplikat
+        C -> DB: 9.4. Create new siswa account
+        DB --> C: 9.5. Account created successfully
+        C --> UI: 9.6. Success response
+        UI --> S: 9.7. Redirect ke halaman login
+    else Data duplikat
+        C --> UI: 9.4. Duplicate error
+        UI --> S: 9.5. Tampilkan pesan error:
+        note right
+        - "NIS sudah terdaftar"
+        - "Email sudah digunakan"
+        end note
+    end
+else Data tidak valid
+    C -> C: 9.1. Validate form data
+    C --> UI: 9.2. Validation error
+    UI --> S: 9.3. Tampilkan pesan error:
+    note right
+    - "Semua formulir harus terisi"
+    - "Format email tidak valid"
+    - "Password minimal 8 karakter"
+    - "Konfirmasi password tidak cocok"
+    end note
+    UI --> S: 9.4. Disable tombol "Buat Akun"
+end
+@enduml

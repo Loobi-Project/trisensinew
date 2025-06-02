@@ -1,0 +1,91 @@
+@startuml
+title Sequence Diagram Ekspor Data Kehadiran Berdasarkan Mata Pelajaran (Guru)
+actor "Guru" as G
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+entity "File System" as FS
+
+== Akses Halaman Rekap Presensi ==
+G -> UI: 1. Akses sidebar "Rekap Presensi Siswa"
+UI -> C: 2. Request rekap presensi page
+C -> DB: 3. Get data kelas yang diampu guru
+DB --> C: 4. Return kelas data
+C -> DB: 5. Get mata pelajaran yang diampu guru
+DB --> C: 6. Return mata pelajaran data
+C -> C: 7. Get current date (tanggal login)
+C --> UI: 8. Load rekap presensi page
+UI --> G: 9. Tampilkan halaman dengan dropdown kelas, tanggal otomatis, dan dropdown mata pelajaran
+
+== Pilih Kelas ==
+G -> UI: 10. Pilih kelas dari dropdown
+UI -> C: 11. Handle kelas selection
+
+alt Kelas dipilih
+    C -> DB: 11.1. Get siswa data berdasarkan kelas
+    DB --> C: 11.2. Return daftar siswa
+    C --> UI: 11.3. Load siswa data
+    UI --> G: 11.4. Tampilkan daftar siswa dan enable tombol export
+    note right
+    Tombol "Export to PDF" dan 
+    "Export to CSV" aktif
+    end note
+else Kelas tidak dipilih
+    UI --> G: 11.1. Data siswa dan tombol export tidak ditampilkan
+    note right
+    - Daftar siswa kosong
+    - Tombol export hidden/disabled
+    - Menunggu pemilihan kelas
+    end note
+end
+
+== Pilih Mata Pelajaran ==
+G -> UI: 12. Pilih mata pelajaran dari dropdown
+UI -> C: 13. Handle mata pelajaran selection
+C -> DB: 14. Get presensi data berdasarkan kelas dan mata pelajaran
+DB --> C: 15. Return data presensi yang telah direkap
+C --> UI: 16. Update tampilan dengan data presensi
+UI --> G: 17. Tampilkan data kehadiran siswa dengan tombol export aktif
+
+== Ekspor Data Kehadiran ==
+alt Export to PDF
+    G -> UI: 18. Klik tombol "Export to PDF"
+    UI -> C: 19. Handle PDF export request
+    C -> DB: 20. Get complete presensi data for export
+    DB --> C: 21. Return detailed presensi data
+    C -> C: 22. Generate PDF report
+    note right
+    PDF berisi:
+    - Data kelas dan mata pelajaran
+    - Tanggal presensi
+    - Daftar siswa dan status kehadiran
+    - Statistik kehadiran
+    end note
+    C -> FS: 23. Save PDF file temporarily
+    FS --> C: 24. PDF file created
+    C --> UI: 25. Prepare PDF download
+    UI --> G: 26. Download PDF file ke perangkat lokal
+else Export to CSV
+    G -> UI: 18. Klik tombol "Export to CSV"
+    UI -> C: 19. Handle CSV export request
+    C -> DB: 20. Get complete presensi data for export
+    DB --> C: 21. Return detailed presensi data
+    C -> C: 22. Generate CSV format
+    note right
+    CSV berisi:
+    - Header: Nama Siswa, NIS, Status Kehadiran, Tanggal
+    - Data siswa per baris
+    - Format comma-separated values
+    end note
+    C -> FS: 23. Save CSV file temporarily
+    FS --> C: 24. CSV file created
+    C --> UI: 25. Prepare CSV download
+    UI --> G: 26. Download CSV file ke perangkat lokal
+end
+
+UI --> G: 27. Tampilkan notifikasi berhasil export
+note right
+"Data kehadiran berhasil diekspor 
+ke perangkat lokal"
+end note
+@enduml

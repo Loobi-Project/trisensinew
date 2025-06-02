@@ -1,0 +1,46 @@
+@startuml
+title Sequence Diagram Mengedit Data Mata Pelajaran (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Mata Pelajaran ==
+TU -> UI: 1. Akses menu "Mata Pelajaran"
+UI -> C: 2. Request subjects page
+C -> DB: 3. Get subjects list
+DB --> C: 4. Return subjects data
+C --> UI: 5. Load subjects page
+UI --> TU: 6. Tampilkan daftar mata pelajaran
+
+== Edit Data Mata Pelajaran ==
+TU -> UI: 7. Klik tombol "Edit" pada mata pelajaran
+UI -> C: 8. Request edit form
+C -> DB: 9. Get subject data & confirmed teachers
+DB --> C: 10. Return subject & teachers data
+C --> UI: 11. Load edit form
+UI --> TU: 12. Tampilkan form edit (data existing + dropdown guru + status)
+
+TU -> UI: 13. Edit nama/guru/status + klik "Simpan"
+UI -> C: 14. Handle form submission
+
+alt Data valid
+    C -> C: 14.1. Validate form data
+    C -> DB: 14.2. Update subject data
+    DB --> C: 14.3. Subject updated successfully
+    C -> DB: 14.4. Get updated subjects list
+    DB --> C: 14.5. Return updated data
+    C --> UI: 14.6. Success response + refresh data
+    UI --> TU: 14.7. "Mata pelajaran berhasil diperbarui" + tampilkan daftar terbaru
+else Data tidak valid
+    C -> C: 14.1. Validate form data
+    C --> UI: 14.2. Validation error
+    UI --> TU: 14.3. Tampilkan pesan error:
+    note right
+    - "Nama mata pelajaran wajib diisi"
+    - "Guru pengampu harus dipilih"
+    end note
+end
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+title Sequence Diagram Unduh Format Surat Izin (Siswa)
+actor "Siswa" as S
+boundary "UI" as UI
+control "Controller" as C
+entity "File System" as FS
+
+== Akses Halaman Surat Keterangan ==
+S -> UI: 1. Akses sidebar "Format Surat"
+UI -> C: 2. Request surat keterangan page
+C -> FS: 3. Check availability format surat file
+FS --> C: 4. Return file status
+C --> UI: 5. Load surat keterangan page
+UI --> S: 6. Tampilkan halaman surat keterangan dengan tombol unduh
+
+== Unduh Format Surat ==
+S -> UI: 7. Klik tombol "Unduh"
+UI -> C: 8. Handle download request
+C -> FS: 9. Get format surat file
+FS --> C: 10. Return file data
+C --> UI: 11. Prepare file download
+UI --> S: 12. Mulai proses download file
+note right
+File format surat izin
+ketidakhadiran siswa
+(format: PDF/DOC)
+end note
+UI --> S: 13. File berhasil terunduh ke perangkat siswa
+@enduml

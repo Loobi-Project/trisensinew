@@ -1,0 +1,78 @@
+@startuml
+title Sequence Diagram Unduh CSV Data Presensi Berdasarkan Filter Tertentu (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary View as V
+control Controller as C
+entity Model as M
+boundary "File System" as FS
+
+== Main Flow - Unduh CSV Data Presensi ==
+
+TU -> V: 1. Akses Dashboard
+V --> TU: Tampilkan Dashboard Tata Usaha
+
+TU -> V: 2. Tekan sidebar dropdown "Presensi Siswa"
+V -> C: 2.1: Handle dropdown menu
+C -> V: 2.2: Show dropdown options
+V --> TU: 2.3: Tampilkan pilihan dropdown
+
+TU -> V: 3. Tekan dropdown "Rekap Kehadiran"
+V -> C: 3.1: Handle navigation to rekap kehadiran
+C -> M: 3.2: Get attendance data and filter options
+M --> C: 3.3: Return data with available filters
+C -> V: 3.4: Load rekap kehadiran page
+V --> TU: 3.5: Tampilkan halaman "Rekap Kehadiran" dengan filter options
+
+== Alternative Flow - Apply Filters ==
+
+group Filter Selection
+    alt apply filters
+        TU -> V: 4.1: Pilih filter (tanggal/angkatan/kelas/semester)
+        V -> C: 4.1.1: Handle filter selection
+        C -> M: 4.1.2: Apply selected filters
+        M --> C: 4.1.3: Return filtered data
+        C -> V: 4.1.4: Update display with filtered results
+        V --> TU: 4.1.5: Tampilkan data sesuai filter
+    else no filters
+        note over TU: Use default/current data
+    end
+end
+
+== CSV Export Process ==
+
+TU -> V: 5. Tekan tombol "Export CSV"
+V -> C: 5.1: Handle CSV export request
+C -> M: 5.2: Get current filtered data
+M --> C: 5.3: Return attendance data for export
+
+C -> FS: 5.4: Generate CSV file with filtered data
+FS --> C: 5.5: CSV file created successfully
+
+C -> V: 5.6: Prepare file download
+V --> TU: 5.7: Download CSV file to local device
+
+group Export Confirmation
+    alt successful export
+        C -> V: 6.1: Show success notification
+        V --> TU: 6.2: "Data berhasil diekspor ke format CSV"
+        C -> FS: 6.3: Clean up temporary files
+    else export failed
+        C -> V: 6.4: Show error notification
+        V --> TU: 6.5: "Gagal mengekspor data, silakan coba lagi"
+    end
+end
+
+note over TU, M
+Pre-kondisi:
+- Tata Usaha berada pada halaman Dashboard
+- Data presensi siswa tersedia dalam sistem
+
+Post-kondisi:
+- Data siswa sudah terunduh dengan format CSV
+- File CSV dapat diolah kembali oleh Tata Usaha
+- Data sesuai filter yang ditentukan:
+  * Tanggal, Angkatan, Kelas, Semester
+end note
+
+@enduml

@@ -51,8 +51,13 @@ Route::middleware(['auth', StaffAdminMiddleware::class])->prefix('staffadmin')->
         ->name('confirm.teacher.update');
     Route::get('/get-teacher', [StaffAdminDashboardController::class, 'getTeacherStaff'])
         ->name('staffadmin.get-teacher');
+    // Route for Student Confirmation
     Route::get('/student-confirmation', [StaffAdminDashboardController::class, 'indexconfirmStudent'])
         ->name('staffadmin.confirm-student');
+    Route::post('/student/{student}/confirm', [StaffAdminDashboardController::class, 'updateConfirmStudent'])
+        ->name('confirm.student.update');
+    Route::get('/get-student', [StaffAdminDashboardController::class, 'getStudent'])
+        ->name('staffadmin.get-student');
     // Subject Route Page
     Route::get('/subjects', [StaffAdminDashboardController::class, 'subjects'])
         ->name('staffadmin.subjects');
@@ -144,6 +149,7 @@ Route::middleware(['auth', StudentMiddleware::class])->prefix('student')->group(
         ->name('student.generate-qr');
     Route::get('/generate-qr', [StudentDashboardController::class, 'showQr'])
         ->name('student.show-qr');
+    Route::get('/get-detect-is-active-student', [StudentDashboardController::class, 'getDetectIsActiveStudent']);
 });
 
 require __DIR__ . '/settings.php';

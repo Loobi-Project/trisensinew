@@ -1,0 +1,43 @@
+@startuml
+title Sequence Diagram Menghapus Data Semester (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Semester ==
+TU -> UI: 1. Akses sidebar "Semester"
+UI -> C: 2. Request semester page
+C -> DB: 3. Get semester list
+DB --> C: 4. Return semester data
+C --> UI: 5. Load semester page
+UI --> TU: 6. Tampilkan halaman semester dengan daftar semester
+
+== Hapus Semester ==
+TU -> UI: 7. Klik tombol "Hapus" pada baris semester
+UI -> C: 8. Request delete confirmation
+C --> UI: 9. Show confirmation dialog
+UI --> TU: 10. Tampilkan jendela konfirmasi penghapusan
+
+alt Konfirmasi hapus
+    TU -> UI: 11. Klik tombol "Hapus" di jendela konfirmasi
+    UI -> C: 12. Handle delete confirmation
+    C -> DB: 13. Delete semester data
+    DB --> C: 14. Semester deleted successfully
+    C -> DB: 15. Get updated semester list
+    DB --> C: 16. Return updated data
+    C --> UI: 17. Success response + refresh data
+    UI --> TU: 18. Tutup jendela konfirmasi + tampilkan daftar semester terbaru
+    note right
+    Data semester berhasil dihapus
+    end note
+else Batal hapus
+    TU -> UI: 11. Klik tombol "Batal" di jendela konfirmasi
+    UI -> C: 12. Cancel delete request
+    C --> UI: 13. Close confirmation dialog
+    UI --> TU: 14. Tutup jendela konfirmasi + kembali ke halaman semester
+    note right
+    Data semester tidak dihapus
+    end note
+end
+@enduml

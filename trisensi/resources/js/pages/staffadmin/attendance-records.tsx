@@ -1516,23 +1516,8 @@ export default function AttendanceRecords({ records, batches = [] }: Props) {
                                                         <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-700 dark:text-gray-300">
                                                             {formattedTime}
                                                         </td>
-                                                        <td className="px-4 py-3 whitespace-nowrap">
-                                                            <div className="text-sm font-medium text-gray-900">{record.student_name}</div>
-                                                        </td>
-                                                        <td className="px-4 py-3 whitespace-nowrap">
-                                                            <div className="text-sm text-gray-500">{record.class_name}</div>
-                                                        </td>
-
-                                                        <AttendanceStatusCell record={record} />
-
-                                                        <td className="px-4 py-3 text-sm whitespace-nowrap text-gray-500">
-                                                            {new Date(record.timestamp).toLocaleString('id-ID', {
-                                                                day: '2-digit',
-                                                                month: '2-digit',
-                                                                year: 'numeric',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
-                                                            })}
+                                                        <td className="px-4 py-3 text-center whitespace-nowrap">
+                                                            <AttendanceStatusCell record={record} />
                                                         </td>
                                                     </tr>
                                                 );

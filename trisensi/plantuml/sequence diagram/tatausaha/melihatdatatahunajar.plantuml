@@ -1,0 +1,15 @@
+@startuml
+title Sequence Diagram Melihat Data Tahun Ajar (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Melihat Data Tahun Ajar ==
+TU -> UI: 1. Akses sidebar "Tahun Ajar"
+UI -> C: 2. Request tahun ajar page
+C -> DB: 3. Get tahun ajar list
+DB --> C: 4. Return tahun ajar data
+C --> UI: 5. Load tahun ajar page
+UI --> TU: 6. Tampilkan halaman tahun ajar dengan daftar tahun ajar
+@enduml

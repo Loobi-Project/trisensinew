@@ -1,0 +1,45 @@
+@startuml
+title Sequence Diagram Menambahkan Data Tahun Ajar (Tata Usaha)
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Tahun Ajar ==
+TU -> UI: 1. Akses sidebar "Tahun Ajar"
+UI -> C: 2. Request tahun ajar page
+C -> DB: 3. Get tahun ajar list
+DB --> C: 4. Return tahun ajar data
+C --> UI: 5. Load tahun ajar page
+UI --> TU: 6. Tampilkan halaman tahun ajar
+
+== Tambah Tahun Ajar Baru ==
+TU -> UI: 7. Tampilkan form tambah tahun ajar
+UI --> TU: 8. Tampilkan form (field Batch - integer, field Deskripsi - format int/int)
+TU -> UI: 9. Input batch (integer) + deskripsi (int/int) + klik "Tambah"
+UI -> C: 10. Handle form submission
+
+alt Data valid
+    C -> C: 10.1. Validate form data
+    note right
+    - Batch tidak boleh kosong (max 4 digit)
+    - Deskripsi tidak boleh kosong (format int/int, max 4 digit each)
+    end note
+    C -> DB: 10.2. Create new tahun ajar
+    DB --> C: 10.3. Tahun ajar created successfully
+    C -> DB: 10.4. Get updated tahun ajar list
+    DB --> C: 10.5. Return updated data
+    C --> UI: 10.6. Success response + refresh data
+    UI --> TU: 10.7. Tampilkan daftar tahun ajar terbaru
+else Data tidak valid
+    C -> C: 10.1. Validate form data
+    C --> UI: 10.2. Validation error
+    UI --> TU: 10.3. Tampilkan pesan error:
+    note right
+    - "Formulir Batch harus terisi"
+    - "Batch tidak boleh lebih dari 4 digit"
+    - "Formulir Deskripsi harus terisi"
+    - "Deskripsi harus format int/int (max 4 digit)"
+    end note
+end
+@enduml

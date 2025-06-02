@@ -1,0 +1,40 @@
+@startuml
+title Sequence Diagram Konfirmasi Akun Guru (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Konfirmasi ==
+TU -> UI: 1. Akses menu "Konfirmasi Akun Guru"
+UI -> C: 2. Request halaman konfirmasi
+C -> DB: 3. Get data guru pending & confirmed
+DB --> C: 4. Return data guru
+C --> UI: 5. Load halaman konfirmasi
+UI --> TU: 6. Tampilkan daftar guru
+
+== Konfirmasi Akun Guru ==
+TU -> UI: 7. Klik tombol "Konfirmasi" pada guru
+UI -> C: 8. Request konfirmasi guru
+alt Data Lengkap (NIK/NUPTK tersedia)
+    C -> DB: 8.1. Update status guru ke "confirmed"
+    DB --> C: 8.2. Success
+    C -> DB: 8.3. Get updated data
+    DB --> C: 8.4. Return updated data
+    C --> UI: 8.5. Success response + refresh data
+    UI --> TU: 8.6. Tampilkan notifikasi sukses & update tabel
+else Data Tidak Lengkap
+    C --> UI: 8.1. Error response
+    UI --> TU: 8.2. Tampilkan pesan error
+end
+
+== Pencarian Guru ==
+TU -> UI: 9. Input nama guru di search
+UI -> C: 10. Request search
+C -> DB: 11. Search guru by name
+DB --> C: 12. Return search results
+C --> UI: 13. Return filtered data
+UI --> TU: 14. Tampilkan hasil pencarian
+
+@enduml

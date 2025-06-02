@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Presence;
 use App\Models\Semester;
-use App\Models\PresenceRecap;
-use App\Models\PresenceStatus;
+use App\Models\Student;
 use App\Models\AbsenceLetterTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +115,46 @@ class StudentDashboardController extends Controller
             'presence' => $todayPresence,  // Tambahkan data presence ke dalam props
             'debug' => app()->environment('local') ? $presenceRecaps : null,
         ]);
+    }
+
+    public function getDetectIsActiveStudent()
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User tidak ditemukan'
+                ], 401);
+            }
+
+            // Ambil data student berdasarkan user_id
+            $student = Student::where('user_id', $user->id)->first();
+
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data student tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'is_active' => $student->is_active,
+                'student_data' => [
+                    'id' => $student->id,
+                    'nis' => $student->nis,
+                    'name' => $user->name,
+                    'email' => $user->email
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function createPresence(Request $request): Response

@@ -17,32 +17,62 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
     const [success, setSuccess] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // const [showPasswordModal, setShowPasswordModal] = useState(false);
-    // const [password, setPassword] = useState('');
-    // const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    // const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
-    // const [passwordError, setPasswordError] = useState<string | null>(null);
-    // const [passwordLoading, setPasswordLoading] = useState(false);
-
     const [showActivatedModal, setShowActivatedModal] = useState(false);
     const [isDataProcessComplete, setIsDataProcessComplete] = useState(false);
 
+    // Initial check for NIP/NUPTK data
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
+                console.log("Checking user NIP/NUPTK status...");
                 const response = await axios.get('/staffteacher/get-detect-nip-nuptk-staffteacher');
+                console.log("NIP/NUPTK check response:", response.data);
+                
                 if (!response.data.is_complete) {
+                    console.log("NIP/NUPTK data incomplete, showing form modal");
                     setShowModal(true);
+                    setShowActivatedModal(false); // Ensure activation modal is closed
                 } else {
-                    checkIsActive();
+                    console.log("NIP/NUPTK data complete, checking activation status");
+                    setIsDataProcessComplete(true);
+                    await checkIsActive(); // Important: await the check
                 }
             } catch (error) {
-                console.error('Gagal mengambil data NIP/NUPTK', error);
+                console.error('Failed to retrieve NIP/NUPTK data', error);
             }
         };
 
         checkUserStatus();
     }, []);
+
+    // Separate effect for activation check when data process completes
+    useEffect(() => {
+        if (isDataProcessComplete) {
+            console.log("Data process complete flag changed, checking activation status");
+            checkIsActive();
+        }
+    }, [isDataProcessComplete]);
+
+    const checkIsActive = async () => {
+        try {
+            console.log("Checking if user is active...");
+            // Use axios consistently instead of mixing fetch and axios
+            const response = await axios.get('/staffteacher/get-detect-is-active-teacher');
+            console.log("Active status check response:", response.data);
+
+            // Fix: Compare with string "0" or convert both to the same type
+            if (response.data && (response.data.is_active === 0 || response.data.is_active === "0")) {
+                console.log("User is not active, showing activation modal");
+                setShowModal(false); // Close any other modals
+                setShowActivatedModal(true);
+            } else {
+                console.log("User is active, all modals should be closed");
+                setShowActivatedModal(false);
+            }
+        } catch (err) {
+            console.error('Failed to retrieve activation status:', err);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -69,7 +99,9 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
         }
 
         try {
+            console.log("Submitting NIP/NUPTK data...");
             const response = await axios.post('/staffteacher/update-nip-nuptk-staffteacher', { nip, nuptk });
+            console.log("NIP/NUPTK submission response:", response.data);
 
             if (response.data?.success) {
                 setSuccess('Data berhasil disimpan!');
@@ -77,42 +109,16 @@ export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
                 setTimeout(() => {
                     setShowModal(false);
                     setIsDataProcessComplete(true);
-                    // setShowPasswordModal(true);
+                    console.log("NIP/NUPTK data saved, marking process complete");
                 }, 1500);
             } else {
                 setError(response.data?.error || 'Terjadi kesalahan yang tidak diketahui.');
             }
         } catch (error: any) {
+            console.error("Error submitting NIP/NUPTK data:", error);
             setError(error.response?.data?.error || 'Terjadi kesalahan saat menyimpan data.');
         } finally {
             setLoading(false);
-        }
-    };
-
-    // Hanya periksa aktivasi setelah proses data selesai
-    useEffect(() => {
-        if (isDataProcessComplete) {
-            checkIsActive();
-        }
-    }, [isDataProcessComplete]);
-
-    const checkIsActive = async () => {
-        try {
-            const res = await fetch('/staffteacher/get-detect-is-active-teacher');
-            const data = await res.json();
-
-            if (data.is_active === 0) {
-                // Tutup modal lain jika masih terbuka
-                setShowModal(false);
-                // setShowPasswordModal(false);
-                setShowActivatedModal(true);
-            } else {
-                // Jika sudah aktif, bersihkan status di localStorage
-                // Ini opsional, tergantung apakah Anda ingin reset status jika user sudah aktif
-                // localStorage.removeItem('passwordUpdated');
-            }
-        } catch (err) {
-            console.error('Gagal mengambil data status:', err);
         }
     };
 

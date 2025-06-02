@@ -1,0 +1,46 @@
+@startuml
+title Sequence Diagram Menambahkan Data Mata Pelajaran (Tata Usaha)
+
+actor "Tata Usaha" as TU
+boundary "UI" as UI
+control "Controller" as C
+entity "Database" as DB
+
+== Akses Halaman Mata Pelajaran ==
+TU -> UI: 1. Akses menu "Mata Pelajaran"
+UI -> C: 2. Request subjects page
+C -> DB: 3. Get subjects list & confirmed teachers
+DB --> C: 4. Return subjects & teachers data
+C --> UI: 5. Load subjects page
+UI --> TU: 6. Tampilkan halaman mata pelajaran
+
+== Tambah Mata Pelajaran Baru ==
+TU -> UI: 7. Klik "Tambah Mata Pelajaran"
+UI -> C: 8. Request form tambah mata pelajaran
+C -> DB: 9. Get confirmed teachers list
+DB --> C: 10. Return teachers data
+C --> UI: 11. Load add subject form
+UI --> TU: 12. Tampilkan form (nama, dropdown guru, status aktif/tidak aktif)
+
+TU -> UI: 13. Input nama mata pelajaran + pilih guru + pilih status (Aktif/Tidak Aktif) + klik "Simpan"
+UI -> C: 14. Handle form submission
+
+alt Data valid
+    C -> C: 14.1. Validate form data
+    C -> DB: 14.2. Create new subject
+    DB --> C: 14.3. Subject created successfully
+    C -> DB: 14.4. Get updated subjects list
+    DB --> C: 14.5. Return updated data
+    C --> UI: 14.6. Success response + refresh data
+    UI --> TU: 14.7. "Mata pelajaran berhasil ditambahkan" + tampilkan daftar terbaru
+else Data tidak valid
+    C -> C: 14.1. Validate form data
+    C --> UI: 14.2. Validation error
+    UI --> TU: 14.3. Tampilkan pesan error:
+    note right
+    - "Nama mata pelajaran wajib diisi"
+    - "Guru pengampu harus dipilih"
+    end note
+end
+
+@enduml
